@@ -1,0 +1,25 @@
+ion-card{
+  margin: 0;
+    padding: 16px;
+}
+
+.outer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+ion-chip{
+  flex-grow: 1;
+  font-weight: 600;
+    padding: 10px 16px;
+    min-width: 90px;
+    align-items: center;
+    justify-content: center;
+    background: #f2f2f2;
+    &.active{
+      background: var(--ion-color-primary);
+      color:white;
+    }
+}

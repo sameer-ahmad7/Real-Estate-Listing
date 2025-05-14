@@ -1,0 +1,98 @@
+/* =====================================
+   🎯 Full-Screen Modal Styles
+====================================== */
+:host {
+  height: 100%;
+}
+
+.swiper-zoom-container {
+  border-radius: 0 !important;
+  img {
+    border-radius: 0 !important;
+  }
+}
+
+.slides-control {
+  padding-bottom: var(--safe-area-inset-bottom);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.fullscreen-modal {
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  /* Top Action Buttons */
+  .fullscreen-actions {
+    position: absolute;
+    top: var(--safe-area-inset-top);
+    right: 10px;
+  }
+
+  /* Slide Counter */
+  .slide-counter {
+    color: white;
+    font-size: 18px;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .action-btn {
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2222;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: 50%;
+  }
+
+  /* Full-Screen Swiper */
+  .fullscreen-swiper {
+    width: 100%;
+  }
+
+  .full-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Navigation Buttons */
+  .custom-nav-button {
+    background: transparent;
+    border: none;
+    box-shadow: unset;
+    cursor: pointer;
+  }
+}
+
+.prev-btn {
+  // top: 50%;
+  // position: absolute;
+  // left: 0;
+  ion-icon {
+    color: white;
+  }
+}
+.next-btn {
+  // position: absolute;
+  // right: 0;
+  // top: 50%;
+  ion-icon {
+    color: white;
+  }
+}

@@ -1,0 +1,91 @@
+<ion-card class="search-container">
+  <div class="input-box">
+    <ion-input
+      class="search-input"
+      lines="none"
+      mode="md"
+      name="searchQuery"
+      [placeholder]="'PLOT_FILTER.Search' | translate"
+      [(ngModel)]="searchQuery"
+    ></ion-input>
+  </div>
+
+  <div class="flex items-center">
+    <div class="input-box">
+      <ion-select
+        [(ngModel)]="selectedDistrict"
+        name="district"
+        [placeholder]="'PLOT_FILTER.District' | translate"
+      >
+        @for (district of districts(); track $index) {
+        <ion-select-option [value]="district.value"
+          >{{district.title}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+  </div>
+
+  <div class="flex items-center">
+    <div class="input-box">
+      <ion-select
+        name="plotArea"
+        [(ngModel)]="selectedPlotArea"
+        [placeholder]="'PLOT_FILTER.PlotArea' | translate"
+      >
+        @for (area of landAreas(); track $index) {
+        <ion-select-option [value]="area.value"
+          >{{area.title}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+  </div>
+
+  <div class="flex items-center">
+    <div class="input-box">
+      <ion-select [(ngModel)]="selectedLandTitle" [placeholder]="'PLOT_FILTER.LandTitle' | translate">
+        @for (landTitle of landTitles(); track $index) {
+        <ion-select-option [value]="landTitle.value"
+          >{{landTitle.title}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+  </div>
+
+  <div class="flex items-center">
+    <div class="input-box">
+      <ion-select
+        [(ngModel)]="selectedBuyPricing"
+        name="pricing"
+        [placeholder]="'PLOT_FILTER.PriceRange' | translate"
+      >
+        @for (pricing of pricings(); track $index) {
+        <ion-select-option [value]="pricing.value"
+          >{{pricing.name}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+  </div>
+
+  <div class="search-btn">
+    <ion-button
+      [disabled]="!appliedFilter"
+      (click)="resetFilter()"
+      color="secondary"
+      shape="round"
+      expand="full"
+      >{{'PLOT_FILTER.Reset' | translate}}</ion-button
+    >
+
+    <ion-button
+      (click)="applyFilter()"
+      color="primary"
+      shape="round"
+      expand="full"
+      >{{'PLOT_FILTER.Search' | translate}}</ion-button
+    >
+  </div>
+</ion-card>

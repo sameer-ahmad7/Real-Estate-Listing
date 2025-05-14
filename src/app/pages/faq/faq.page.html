@@ -1,0 +1,177 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+      defaultHref="/tabs/more"
+      text=""
+      icon="chevron-back"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{'FAQ.FAQ' | translate}}</ion-title>
+
+  </ion-toolbar>
+
+  <div class="outer">
+    @for (segment of segments; track $index) {
+      <ion-chip
+      (click)="onSelectSegment(segment)"
+      [class.active]="selectedSegment.faqType===segment.faqType"
+      >{{segment.title | translate}}</ion-chip>
+    }
+
+
+</div>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if(selectedSegment.faqType===faqTypeEnum.Advertising){
+    @if(isAdvertisingLoading){
+      <div class="h-full flex flex col items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+            </div>
+    }@else {
+      @for (faq of advertisingFaq; track faq.id) {
+        <div class="flex flex-col gap-10px">
+          <app-faq-view
+          [faq]="faq"
+          ></app-faq-view>
+        </div>
+      }@empty {
+        <div class="mt-32 flex flex items-center justify-center">
+          <p>{{'FAQ.NoFAQ' | translate}}</p>
+        </div>
+      }
+    }
+  }
+  @if(selectedSegment.faqType===faqTypeEnum.Appraisals){
+    @if(isAppraisalLoading){
+      <div class="h-full flex flex col items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+
+      </div>
+    }@else {
+      @for (faq of appraisalsFaq; track faq.id) {
+        <div class="flex flex-col gap-10px">
+          <app-faq-view
+          [faq]="faq"
+          ></app-faq-view>
+        </div>
+      }@empty {
+        <div class="mt-32 flex flex items-center justify-center">
+          <p>{{'FAQ.NoFAQ' | translate}}</p>
+        </div>
+      }
+    }
+  }
+
+  @if(selectedSegment.faqType===faqTypeEnum.Buy){
+    @if(isBuyLoading){
+      <div class="h-full flex flex col items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+
+      </div>
+    }@else {
+      @for (faq of buyFaq; track faq.id) {
+        <div class="flex flex-col gap-10px">
+          <app-faq-view
+          [faq]="faq"
+          ></app-faq-view>
+        </div>
+      }@empty {
+        <div class="mt-32 flex flex items-center justify-center">
+          <p>{{'FAQ.NoFAQ' | translate}}</p>
+        </div>
+      }
+    }
+  }
+
+  @if(selectedSegment.faqType===faqTypeEnum.Mortgage){
+    @if(isMortgageLoading){
+      <div class="h-full flex flex col items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+
+      </div>
+    }@else {
+      @for (faq of mortgageFaq; track faq.id) {
+        <div class="flex flex-col gap-10px">
+          <app-faq-view
+          [faq]="faq"
+          ></app-faq-view>
+        </div>
+      }@empty {
+        <div class="mt-32 flex flex items-center justify-center">
+          <p>{{'FAQ.NoFAQ' | translate}}</p>
+        </div>
+      }
+    }
+  }
+
+  @if(selectedSegment.faqType===faqTypeEnum.Rent){
+    @if(isRentLoading){
+      <div class="h-full flex flex col items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+
+      </div>
+    }@else {
+      @for (faq of rentFaq; track faq.id) {
+        <div class="flex flex-col gap-10px">
+          <app-faq-view
+          [faq]="faq"
+          ></app-faq-view>
+        </div>
+      }@empty {
+        <div class="mt-32 flex flex items-center justify-center">
+          <p>{{'FAQ.NoFAQ' | translate}}</p>
+        </div>
+      }
+    }
+  }
+
+  @if(selectedSegment.faqType===faqTypeEnum.Rental){
+    @if(isRentalLoading){
+      <div class="h-full flex flex col items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+
+      </div>
+    }@else {
+      @for (faq of rentalFaq; track faq.id) {
+        <div class="flex flex-col gap-10px">
+          <app-faq-view
+          [faq]="faq"
+          ></app-faq-view>
+        </div>
+      }@empty {
+        <div class="mt-32 flex flex items-center justify-center">
+          <p>{{'FAQ.NoFAQ' | translate}}</p>
+        </div>
+      }
+    }
+  }
+
+  @if(selectedSegment.faqType===faqTypeEnum.Sell){
+    @if(isSellLoading){
+      <div class="h-full flex flex col items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+
+      </div>
+    }@else {
+      @for (faq of sellFaq; track faq.id) {
+        <div class="flex flex-col gap-10px">
+          <app-faq-view
+          [faq]="faq"
+          ></app-faq-view>
+        </div>
+      }@empty {
+        <div class="mt-32 flex flex items-center justify-center">
+          <p>{{'FAQ.NoFAQ' | translate}}</p>
+        </div>
+      }
+    }
+  }
+
+
+
+
+
+
+</ion-content>

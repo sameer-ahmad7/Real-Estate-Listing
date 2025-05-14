@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+      text=""
+      icon="chevron-back"
+      defaultHref="/tabs/more"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{'AGENTS.Agents' | translate}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if(isLoading){
+    <div class="h-full flex flex-col items-center justify-center">
+      <app-custom-spinner></app-custom-spinner>
+        </div>
+  }@else{
+    <ion-grid>
+      <ion-row>
+        @for (agent of agents; track agent.id) {
+          <ion-col size="6" >
+            <div class="flex flex-col items-center gap-[10px] container h-full">
+              <div class="avatar" [routerLink]="['/agents',agent.id]">
+                <img [src]="agent.image" />
+              </div>
+              <h4 class="ion-no-margin" [routerLink]="['/agents',agent.id]">{{agent.title}}</h4>
+              <div class="flex justify-center items-center gap-[10px]">
+                <div
+                (click)="openPhoneNumber(agent.tel,$event)"
+                class="icons">
+                  <ion-icon
+                    color="primary"
+                    class="material-icons"
+                    data-icon="phone_in_talk"
+                  ></ion-icon>
+                  <!-- <p>{{agent.tel}}</p> -->
+                </div>
+                <div class="icons">
+                  <ion-icon
+                  (click)="openEmail(agent.email)"
+                    color="primary"
+                    class="material-icons"
+                    data-icon="near_me"
+                  ></ion-icon>
+                  <!-- <p>{{agent.email}}</p> -->
+                </div>
+
+              </div>
+            </div>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  }
+</ion-content>

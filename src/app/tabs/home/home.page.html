@@ -1,0 +1,141 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{'HOME.Recent_Listings' | translate}}</ion-title>
+    <ion-buttons slot="end">
+      @if(language){
+        <ion-button (click)="openLanguageMenu($event)">
+          <img id="language" class="w-[24px] h-[24px]" [src]="language==='en'?'assets/images/languages/english.png':'assets/images/languages/dutch.png'"/>
+        </ion-button>
+      }
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+<ion-content  class="ion-padding home-container">
+  <div class="overlay"></div>
+
+  @if(isLoading){
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+  }@else{
+  <ion-list>
+    <ion-item routerLink="/houses" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/houses-for-sale.svg"
+      ></ion-icon>
+      <ion-label>{{'HOME.Properties_For_Sale' | translate}}</ion-label>
+    </ion-item>
+    <ion-item detail routerLink="/plots" lines="none">
+      <ion-icon slot="start" src="assets/images/icons/plots.svg"></ion-icon>
+      <ion-label>{{'HOME.Plots_for_Sale' | translate}}</ion-label>
+    </ion-item>
+    <ion-item routerLink="/houses/rental" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/houses-for-rent.svg"
+      ></ion-icon>
+      <ion-label>{{'HOME.Properties_for_Rent' | translate}}</ion-label>
+    </ion-item>
+    <ion-item routerLink="/vacation-rentals" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/vacation-rentals.svg"
+      ></ion-icon>
+      <ion-label>{{'HOME.VacationRentals' | translate}}</ion-label>
+    </ion-item>
+    <ion-item routerLink="/business-properties" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/business-properties-for-sale.svg"
+      ></ion-icon>
+      <ion-label>{{'HOME.Business_Properties_for_Sale' | translate}}</ion-label>
+    </ion-item>
+    <ion-item routerLink="/business-properties/rental" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/business-properties-for-rent.svg"
+      ></ion-icon>
+      <ion-label>{{'HOME.Business_Properties_for_Rent' | translate}}</ion-label>
+    </ion-item>
+    <ion-card class="sub-menu expanded">
+      <div class="flex items-center justify-between h-full pl-[16px] header">
+        <div class="flex items-center">
+          <ion-icon
+            color="primary"
+            class="material-icons"
+            data-icon="engineering"
+            (click)="gotoDetails(projectDevelopmentMenu.url)"
+          >
+          </ion-icon>
+          <ion-label (click)="gotoDetails(projectDevelopmentMenu.url)"
+            >{{projectDevelopmentMenu.title}}</ion-label
+          >
+        </div>
+        <ion-icon
+          (click)="toggleProjectDevelopmentExpansion()"
+          class="toggle-icon"
+          [name]="isProjectDevelopmentExpanded?'chevron-up':'chevron-down'"
+        ></ion-icon>
+      </div>
+      @if(isProjectDevelopmentExpanded){
+      <div class="separator ion-margin-vertical"></div>
+      <ion-card-content>
+        <ion-list>
+          @for (item of projectDevelopmentMenu.children; track $index) {
+          <ion-item lines="none" detail (click)="gotoDetails(item.url)">
+            <ion-label>{{item.title}}</ion-label>
+          </ion-item>
+
+          }
+        </ion-list>
+      </ion-card-content>
+
+      }
+    </ion-card>
+
+    <ion-card class="sub-menu expanded">
+      <div class="flex items-center justify-between h-full pl-[16px] header">
+        <div class="flex items-center">
+          <ion-icon
+            (click)="gotoDetails(constructionsMenu.url)"
+            src="assets/images/icons/construction-infrastructure.svg"
+          ></ion-icon>
+          <ion-label [innerHTML]="constructionsMenu.title" (click)="gotoDetails(constructionsMenu.url)"
+            ></ion-label
+          >
+        </div>
+        <ion-icon
+          (click)="toggleConstructionExpansion()"
+          class="toggle-icon"
+          [name]="isConstructionExpanded?'chevron-up':'chevron-down'"
+        ></ion-icon>
+      </div>
+      @if(isConstructionExpanded){
+      <div class="separator ion-margin-vertical"></div>
+      <ion-card-content>
+        <ion-list>
+          @for (item of constructionsMenu.children; track $index) {
+          <ion-item lines="none" detail (click)="gotoDetails(item.url)">
+            <ion-label>{{item.title}}</ion-label>
+          </ion-item>
+
+          }
+        </ion-list>
+      </ion-card-content>
+
+      }
+    </ion-card>
+    <ion-item routerLink="/oil-and-gas" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/oil-and-gas.svg"
+      ></ion-icon>
+      <ion-label>Oil & Gas Suriname</ion-label>
+    </ion-item>
+  </ion-list>
+
+  }
+</ion-content>

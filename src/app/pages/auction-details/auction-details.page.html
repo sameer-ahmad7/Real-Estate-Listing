@@ -1,0 +1,349 @@
+<ion-header
+  [class.media]="!isLoading && property && property.featured_media_thumbnail"
+>
+  @if(!isLoading){
+  <div class="header-image">
+    <img
+      [src]="property.featured_media_thumbnail?(property.featured_media_thumbnail | secureUrl):'assets/images/logo.png'"
+    />
+  </div>
+  }
+  <ion-toolbar>
+    @if(!isLoading) {
+    <ion-buttons slot="start">
+      <div class="custom-btn back-btn">
+        <ion-back-button
+          defaultHref="/tabs/home"
+          text=""
+          icon="chevron-back"
+        ></ion-back-button>
+      </div>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <div class="custom-btn menu-btn">
+        <ion-button id="menu-trigger" fill="clear">
+          <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+        </ion-button>
+      </div>
+      <ion-popover #popover trigger="menu-trigger" triggerAction="click">
+        <ng-template>
+          <ion-content>
+            <ion-list>
+              <ion-item (click)="openGoogleMaps()">
+                <ion-icon
+                  slot="start"
+                  color="primary"
+                  class="material-icons"
+                  data-icon="directions"
+                ></ion-icon>
+                {{'AUCTION_DETAILS.Directions' | translate}}
+              </ion-item>
+
+              <ion-item (click)="share()">
+                <ion-icon
+                  slot="start"
+                  color="primary"
+                  class="material-icons"
+                  data-icon="share"
+                ></ion-icon>
+                {{'AUCTION_DETAILS.Share' | translate}}
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </ion-buttons>
+
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-modal
+    class="full-view"
+    [isOpen]="isFullViewOpen"
+    (didDismiss)="dismissModal()"
+  >
+    <ng-template>
+      <app-fullscreen-view
+        [fullViewIndex]="galleryViewIndex"
+        [images]="galleryImages"
+      ></app-fullscreen-view>
+    </ng-template>
+  </ion-modal>
+
+  @if(!isLoading){
+  <div class="flex flex-col gap-[6px]">
+    <h2 class="text-[black] title" [innerHTML]="property.title.rendered"></h2>
+    <div class="flex items-center gap-[6px]">
+      <ion-icon
+        color="primary"
+        class="material-icons"
+        data-icon="pin_drop"
+      ></ion-icon>
+      <p class="text-[black]">
+        @if(property['wpcf-buurt']){ {{ property["wpcf-buurt"] }}, }
+        @if(property.district){ {{ property.district }} }
+      </p>
+    </div>
+  </div>
+  <div class="ion-margin-top"></div>
+  <ion-card class="price-card">
+    <div class="flex items-center justify-between">
+      @if(property['wpcf-prijs-zonder-punten']){
+      <ion-segment mode="ios" [(ngModel)]="selectedSegment">
+        <ion-segment-button value="eur">
+          <ion-label>EURO</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="usd">
+          <ion-label>USD</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="srd">
+          <ion-label>SRD</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <ion-button fill="outline" class="price-btn">
+        @if(property['wpcf-prijs-zonder-punten']){ @if(selectedSegment==='eur'){
+        {{property.eur }} }@else if(selectedSegment==='usd'){ {{property.usd}}
+        }@else { {{property.srd}} } }
+      </ion-button>
+      }@else {
+      <ion-button fill="outline" class="price-btn">
+        {{'AUCTION_DETAILS.PriceNegotiable' | translate}}
+      </ion-button>
+      }
+    </div>
+
+    <div class="card-content">
+      <h3 class="ion-margin-top">
+        {{'AUCTION_DETAILS.Highlights' | translate}}
+      </h3>
+      <div class="info-btns flex items-center justify-between ion-margin-top">
+        @if(property['wpcf-perceeloppervlakte']){
+        <div class="flex items-center gap-[6px]">
+          <ion-icon
+            color="primary"
+            class="material-icons-outlined"
+            data-icon="zoom_out_map"
+          ></ion-icon>
+          <p class="text-[black]">
+            {{ property["wpcf-perceeloppervlakte"] | dotToComma }} m²
+            {{'AUCTION_DETAILS.Property' | translate}}
+          </p>
+        </div>
+
+        } @if(property['wpcf-bouwoppervlakte']){
+        <div class="flex items-center gap-[6px]">
+          <ion-icon
+            color="primary"
+            class="material-icons-outlined"
+            data-icon="filter_none"
+          ></ion-icon>
+          <p class="text-[black]">
+            {{ property["wpcf-bouwoppervlakte"] | dotToComma }} m²
+          </p>
+        </div>
+        }
+      </div>
+      <ion-grid class="ion-margin-top ion-no-padding">
+        <ion-row>
+          @if(property.status){
+          <ion-col size="6" class="ion-margin-top">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.Status' | translate}}:
+              </p>
+              <p>{{property.status}}</p>
+            </div>
+          </ion-col>
+          } @if(property['wpcf-etages']){
+          <ion-col size="6" class="ion-margin-top">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.Floors' | translate}}:
+              </p>
+              <p>{{property['wpcf-etages']}}</p>
+            </div>
+          </ion-col>
+          } @if(property.type){
+          <ion-col size="6" class="ion-margin-top">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.Type' | translate}}:
+              </p>
+              <p>{{property.type}}</p>
+            </div>
+          </ion-col>
+          } @if(property['wpcf-perceel-diepte']){
+          <ion-col class="ion-margin-top" size="6">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.Depth' | translate}}:
+              </p>
+              <p>{{property['wpcf-perceel-diepte'] | dotToComma}} m²</p>
+            </div>
+          </ion-col>
+          } @if(property['wpcf-kantoorruimte']){
+          <ion-col class="ion-margin-top" size="6">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.OfficeSpace' | translate}}:
+              </p>
+              <p>{{property['wpcf-kantoorruimte'] | dotToComma}} m²</p>
+            </div>
+          </ion-col>
+          } @if(property['wpcf-aantal-kantoorruimtes']){
+          <ion-col class="ion-margin-top" size="6">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.Offices' | translate}}:
+              </p>
+              <p>{{property['wpcf-aantal-kantoorruimtes']}}</p>
+            </div>
+          </ion-col>
+          } @if(property['wpcf-aantal-parkeerplaatsen']){
+          <ion-col class="ion-margin-top" size="6">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.ParkingSpaces' | translate}}:
+              </p>
+              <p>{{property['wpcf-aantal-parkeerplaatsen']}}</p>
+            </div>
+          </ion-col>
+          } @if(property['wpcf-frontbreedte-wegzijde']){
+          <ion-col class="ion-margin-top" size="6">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.FrontWidth' | translate}}:
+              </p>
+              <p>{{property['wpcf-frontbreedte-wegzijde'] | dotToComma}} m²</p>
+            </div>
+          </ion-col>
+          } @if(property['wpcf-aantal-kamers']){
+          <ion-col class="ion-margin-top" size="6">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.Baths' | translate}}:
+              </p>
+              <p>{{property['wpcf-aantal-kamers']}}</p>
+            </div>
+          </ion-col>
+          } @if(property['wpcf-aantal-toiletten']){
+          <ion-col class="ion-margin-top" size="6">
+            <div class="flex items-center gap-[10px]">
+              <p class="text-[black] font-[600]">
+                {{'AUCTION_DETAILS.Toilets' | translate}}:
+              </p>
+              <p>{{property['wpcf-aantal-toiletten']}}</p>
+            </div>
+          </ion-col>
+          }
+        </ion-row>
+      </ion-grid>
+      <div class="description flex items-center justify-between ion-margin-top">
+        <h3>{{'AUCTION_DETAILS.Description' | translate}}</h3>
+        <ion-chip>{{property['wpcf-object-code']}}</ion-chip>
+      </div>
+      <div
+        (click)="toggleContent()"
+        class="ion-margin-top"
+        [innerHTML]="displayedContent"
+      ></div>
+    </div>
+  </ion-card>
+  @if(!isRepeatableMediaLoading && repeatableMedias.length>1 ){
+  <div class="ion-margin-top">
+    <h3>{{'AUCTION_DETAILS.Gallery' | translate}}</h3>
+  </div>
+  <swiper-container
+    (swiperslidechange)="updateGalleryViewIndex($event)"
+    #slides
+    init="false"
+    class="custom-swiper ion-margin-top"
+  >
+    @for (gallery of repeatableMedias;track $index) {
+    <swiper-slide (click)="openFullView()" class="custom-slide">
+      <img [src]="gallery.thumbnail| secureUrl" />
+    </swiper-slide>
+    }
+  </swiper-container>
+  } @if(mapURL){
+  <div class="ion-margin-top map-img">
+    <h3>{{'AUCTION_DETAILS.FindonMap' | translate}}</h3>
+    <img (click)="openGoogleMaps()" [src]="mapURL | secureUrl" alt="Location" />
+  </div>
+  } @if(property['wpcf-makelaar-naam']){
+  <div class="ion-margin-top">
+    <ion-card class="broker">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-[10px]">
+          <div class="flex flex-col gap-[4px]">
+            <h3>{{property['wpcf-makelaar-naam']}}</h3>
+            <ion-text color="primary"
+              ><p>{{'AUCTION_DETAILS.Agent' | translate}}</p></ion-text
+            >
+          </div>
+        </div>
+
+        <div class="icons flex items-center gap-[6px]">
+          @if(property['wpcf-makelaar-tel']){
+          <ion-icon
+            (click)="openPhoneNumber(property['wpcf-makelaar-tel'])"
+            color="primary"
+            class="material-icons"
+            data-icon="phone_in_talk"
+          ></ion-icon>
+
+          } @if(property['wpcf-makelaar-mail']){
+          <ion-icon
+            (click)="openEmail(property['wpcf-makelaar-mail'])"
+            color="primary"
+            class="material-icons"
+            data-icon="near_me"
+          ></ion-icon>
+          }
+        </div>
+      </div>
+    </ion-card>
+  </div>
+
+  }@else {
+  <div class="ion-margin-top">
+    <ion-card class="broker">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-[10px]">
+          <div class="avatar">
+            <img src="assets/images/logo.png" />
+          </div>
+          <div class="flex flex-col gap-[4px]">
+            <h3>{{'AUCTION_DETAILS.Contact' | translate}}</h3>
+            <ion-text color="primary"><p>'' Makelaardij NV</p></ion-text>
+          </div>
+        </div>
+
+        <div class="icons flex items-center gap-[6px]">
+          <ion-icon
+            (click)="openPhoneNumber('+597 422 644')"
+            color="primary"
+            class="material-icons"
+            data-icon="phone_in_talk"
+          ></ion-icon>
+
+          <ion-icon
+            (click)="openEmail('info@''.com')"
+            color="primary"
+            class="material-icons"
+            data-icon="near_me"
+          ></ion-icon>
+        </div>
+      </div>
+    </ion-card>
+  </div>
+
+  } } @else {
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+
+  }
+</ion-content>

@@ -1,0 +1,117 @@
+<ion-card class="search-container">
+  <div class="input-box">
+    <ion-input
+      class="search-input"
+      lines="none"
+      mode="md"
+      name="searchQuery"
+      [placeholder]="'HOME_FILTER.Search' | translate"
+      [(ngModel)]="searchQuery"
+    ></ion-input>
+  </div>
+
+  <div class="flex gap-[6px] items-center">
+    <div class="input-box">
+      <ion-select
+        [value]="selectedPropertyType"
+        (ionChange)="onPropertyTypeChanged($event)"
+        [placeholder]="'HOME_FILTER.PropertyType' | translate"
+      >
+        @for (propertyType of homeTypes(); track $index) {
+        <ion-select-option [value]="propertyType.value"
+          >{{propertyType.title}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+    <div class="input-box">
+      <ion-select
+        [value]="selectedDistrict"
+        (ionChange)="onDistrictChanged($event)"
+        [placeholder]="'HOME_FILTER.District' | translate"
+      >
+        @for (district of districts(); track $index) {
+        <ion-select-option [value]="district.value"
+          >{{district.title}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+
+
+
+  </div>
+
+  <div class="flex items-center">
+    <div class="input-box">
+      <ion-select
+        [value]="isRental()?selectedRentalPricing:selectedBuyPricing"
+        (ionChange)="onPriceChanged($event)"
+        [placeholder]="'HOME_FILTER.PriceRange' | translate"
+      >
+        @for (pricing of pricings(); track $index) {
+        <ion-select-option [value]="pricing.value"
+          >{{pricing.name}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+  </div>
+
+  @if(!isRental()){
+
+
+  <div class="flex items-center">
+    <div class="input-box">
+      <ion-select
+        name="plotArea"
+        [(ngModel)]="selectedPlotArea"
+        [placeholder]="'HOME_FILTER.PlotArea' | translate"
+      >
+        @for (area of plotAreas(); track $index) {
+        <ion-select-option [value]="area.value"
+          >{{area.title}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+  </div>
+
+  <div class="flex items-center">
+    <div class="input-box">
+      <ion-select
+        name="constructionArea"
+        [(ngModel)]="selectedConstructionArea"
+        [placeholder]="'HOME_FILTER.ConstructionArea' | translate"
+      >
+        @for (area of constructionAreas(); track $index) {
+        <ion-select-option [value]="area.value"
+          >{{area.title}}</ion-select-option
+        >
+        }
+      </ion-select>
+    </div>
+  </div>
+
+}
+
+
+  <div class="search-btn">
+    <ion-button
+      [disabled]="!appliedFilter"
+      (click)="resetFilter()"
+      color="secondary"
+      shape="round"
+      expand="full"
+      >{{'HOME_FILTER.Reset' | translate}}</ion-button
+    >
+
+    <ion-button
+      (click)="applyFilter()"
+      color="primary"
+      shape="round"
+      expand="full"
+      >{{'HOME_FILTER.Search' | translate}}</ion-button
+    >
+  </div>
+</ion-card>

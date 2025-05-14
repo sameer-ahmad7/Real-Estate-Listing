@@ -1,0 +1,24 @@
+<ion-card
+class="faq"
+[class.active]="isExpanded"
+
+>
+  <div
+  class="flex flex-col gap-[10px] mt[24px]">
+    <div class="flex items-start justify-between w-full" (click)="toggleExpansion()">
+      <h4 [innerHTML]="faq().title.rendered"></h4>
+        @if(isExpanded){
+          <ion-icon slot="icon-only" name="chevron-up-circle-outline"></ion-icon>
+
+        }@else {
+          <ion-icon slot="icon-only" name="chevron-down-circle-outline"></ion-icon>
+
+        }
+    </div>
+
+    @if(isExpanded){
+      <div class="desc overflow-x-scroll w-full" [innerHTML]="faq().content.rendered"></div>
+    }
+
+  </div>
+</ion-card>

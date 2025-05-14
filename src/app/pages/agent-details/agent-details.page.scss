@@ -1,0 +1,46 @@
+.broker {
+  background: var(--ion-color-primary);
+  margin: 0;
+  padding: 0;
+  h3 {
+    color: white;
+    font-weight: 500;
+  }
+  img{
+    width: 110px;
+    height: 100%;
+  }
+  .icons {
+    ion-icon {
+      padding: 4px;
+      background: white;
+      border-radius: 50%;
+      font-size: 16px;
+    }
+    p{
+      color:white;
+    }
+  }
+}
+
+.outer {
+  width: 98%; /* Adjust the container width */
+  overflow-x: auto;
+  white-space: nowrap; /* Prevents content from wrapping */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE & Edge */
+  ion-chip{
+    font-weight: 600;
+      padding: 10px 16px;
+      min-width: 90px;
+      align-items: center;
+      justify-content: center;
+      background: #f2f2f2;
+      &.active{
+        background: var(--ion-color-primary);
+        color:white;
+      }
+  }
+
+}
+

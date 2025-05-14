@@ -1,0 +1,340 @@
+<ion-content>
+  <ion-header [class.media]="!isLoading && plot">
+    @if(!isLoading){
+    <div class="header-image">
+      <img
+        [src]="plot.featured_media_thumbnail?(plot.featured_media_thumbnail | secureUrl):'assets/images/logo.png'"
+      />
+    </div>
+
+    }
+    <ion-toolbar>
+      @if(!isLoading) {
+      <ion-buttons slot="start">
+        <div class="custom-btn back-btn">
+          <ion-back-button
+            defaultHref="/tabs/home"
+            text=""
+            icon="chevron-back"
+          ></ion-back-button>
+        </div>
+      </ion-buttons>
+      <ion-buttons slot="end">
+        <div class="custom-btn menu-btn">
+          <ion-button id="menu-trigger" fill="clear">
+            <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+          </ion-button>
+          <ion-popover #popover trigger="menu-trigger" triggerAction="click">
+            <ng-template>
+              <ion-content>
+                <ion-list>
+                  <ion-item (click)="toggleFavorite(popover)">
+                    <ion-icon
+                      slot="start"
+                      color="primary"
+                      class="material-icons"
+                      data-icon="favorite"
+                    ></ion-icon>
+                    @if(isFavorite){ {{'PLOT_DETAILS.RemovefromFavorites' |
+                    translate}} }@else { {{'PLOT_DETAILS.AddtoFavorites' |
+                    translate}} }
+                  </ion-item>
+                  <ion-item (click)="openGoogleMaps()">
+                    <ion-icon
+                      slot="start"
+                      color="primary"
+                      class="material-icons"
+                      data-icon="directions"
+                    ></ion-icon>
+                    {{'PLOT_DETAILS.Directions' | translate}}
+                  </ion-item>
+
+                  <ion-item (click)="share()">
+                    <ion-icon
+                      slot="start"
+                      color="primary"
+                      class="material-icons"
+                      data-icon="share"
+                    ></ion-icon>
+                    {{'PLOT_DETAILS.Share' | translate}}
+                  </ion-item>
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ion-buttons>
+
+      }
+    </ion-toolbar>
+  </ion-header>
+  <ion-modal
+    class="full-view"
+    [isOpen]="isFullViewOpen"
+    (didDismiss)="dismissModal()"
+  >
+    <ng-template>
+      <app-fullscreen-view
+        [fullViewIndex]="galleryViewIndex"
+        [images]="galleryImages"
+      ></app-fullscreen-view>
+    </ng-template>
+  </ion-modal>
+
+  @if(!isLoading){
+  <div class="ion-padding">
+    <div class="flex flex-col gap-[6px]">
+      <h2 class="text-[black] title" [innerHTML]="plot.title.rendered"></h2>
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons"
+          data-icon="pin_drop"
+        ></ion-icon>
+        <p class="text-[black]">
+          @if(plot['wpcf-buurt']){ {{ plot["wpcf-buurt"] }}, }
+          @if(plot.district){ {{ plot.district }} }
+        </p>
+      </div>
+      @if(distance){
+      <div class="flex items-center gap-[6px] ion-margin-top">
+        <ion-icon
+          color="primary"
+          class="material-icons"
+          data-icon="route"
+        ></ion-icon>
+        <p class="text-[black]">{{ distance }}</p>
+      </div>
+
+      }
+    </div>
+    <div class="ion-margin-top"></div>
+    <ion-card class="price-card">
+      <div class="flex flex-col gap-[10px] items-center justify-center">
+        @if(plot['wpcf-prijs-zonder-punten']){
+        <ion-segment mode="ios" [(ngModel)]="selectedSegment">
+          <ion-segment-button value="eur">
+            <ion-label>EURO</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="usd">
+            <ion-label>USD</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="srd">
+            <ion-label>SRD</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <ion-button fill="outline" class="price-btn">
+          @if(plot['wpcf-prijs-zonder-punten']){ @if(selectedSegment==='eur'){
+          {{plot.eur}} }@else if(selectedSegment==='usd'){ {{plot.usd}} }@else {
+          {{plot.srd}} } }
+        </ion-button>
+        }@else {
+        <ion-button fill="outline" class="price-btn">
+          {{'PLOT_DETAILS.PriceisNegotiable' | translate}}
+        </ion-button>
+        }
+      </div>
+
+      <div class="card-content">
+        <h3 class="ion-margin-top">
+          {{'PLOT_DETAILS.Highlights' | translate}}
+        </h3>
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col size="6" class="ion-margin-top">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{'PLOT_DETAILS.Status' | translate}}:
+                </p>
+                <p>{{plot.status}}</p>
+              </div>
+            </ion-col>
+            @if(plot["wpcf-perceeloppervlakte"]){
+            <ion-col size="6" class="ion-margin-top">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{'PLOT_DETAILS.PlotArea' | translate}}:
+                </p>
+
+                <p>{{ plot["wpcf-perceeloppervlakte"] | dotToComma }} m²</p>
+              </div>
+            </ion-col>
+            } @if(plot['wpcf-bodemgesteldheid']){
+            <ion-col size="6" class="ion-margin-top">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{'PLOT_DETAILS.Soil' | translate}}:
+                </p>
+                <p>{{plot['wpcf-bodemgesteldheid']}}</p>
+              </div>
+            </ion-col>
+            } @if(plot.landTitle){
+            <ion-col size="6" class="ion-margin-top">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{'PLOT_DETAILS.LandTitle' | translate}}:
+                </p>
+                <p>{{plot.landTitle}}</p>
+              </div>
+            </ion-col>
+            } @if(plot['wpcf-perceel-diepte']){
+            <ion-col class="ion-margin-top" size="6">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{'PLOT_DETAILS.Depth' | translate}}:
+                </p>
+                <p>{{plot['wpcf-perceel-diepte'] | dotToComma}} m²</p>
+              </div>
+            </ion-col>
+            } @if(plot['wpcf-frontbreedte-wegzijde']){
+            <ion-col class="ion-margin-top" size="6">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{'PLOT_DETAILS.FrontWidth' | translate}}:
+                </p>
+                <p>{{plot['wpcf-frontbreedte-wegzijde'] | dotToComma}} m²</p>
+              </div>
+            </ion-col>
+            }
+          </ion-row>
+        </ion-grid>
+        <div
+          class="description flex items-center justify-between ion-margin-top"
+        >
+          <h3>{{'PLOT_DETAILS.Description' | translate}}</h3>
+          <ion-chip>{{plot['wpcf-object-code']}}</ion-chip>
+        </div>
+        <div
+          (click)="toggleContent()"
+          class="ion-margin-top"
+          [innerHTML]="displayedContent"
+        ></div>
+      </div>
+    </ion-card>
+    @if(plot.gallery_thumbnails.length>0 ){
+    <div class="ion-margin-top">
+      <h3>{{'PLOT_DETAILS.Gallery' | translate}}</h3>
+    </div>
+    <swiper-container
+      (swiperslidechange)="updateGalleryViewIndex($event)"
+      #slides
+      init="false"
+      class="custom-swiper ion-margin-top"
+    >
+      @for (gallery of plot.gallery_thumbnails;track $index) {
+      <swiper-slide (click)="openFullView()" class="custom-slide">
+        <img [src]="gallery.thumbnail| secureUrl" />
+      </swiper-slide>
+      }
+    </swiper-container>
+    }
+    <div class="ion-margin-top map-img">
+      <h3>{{'PLOT_DETAILS.FindonMap' | translate}}</h3>
+      <img
+        (click)="openGoogleMaps()"
+        [src]="mapURL | secureUrl"
+        alt="Location"
+      />
+    </div>
+
+    @if(plot.broker){
+    <div class="ion-margin-top">
+      <ion-card class="broker">
+        <div class="flex items-center justify-between">
+          <div
+            [routerLink]="['/agents',plot.broker.id]"
+            class="flex items-center gap-[10px]"
+          >
+            <div class="avatar">
+              <img [src]="plot.broker.image | secureUrl" />
+            </div>
+            <div class="flex flex-col gap-[4px]">
+              <h3>{{plot.broker.title}}</h3>
+              <ion-text color="primary"
+                ><p>{{'PLOT_DETAILS.Agent' | translate}}</p></ion-text
+              >
+            </div>
+          </div>
+
+          <div class="icons flex items-center gap-[6px]">
+            <ion-icon
+              (click)="openPhoneNumber(plot.broker.tel,$event)"
+              color="primary"
+              class="material-icons"
+              data-icon="phone_in_talk"
+            ></ion-icon>
+
+            <ion-icon
+              (click)="openEmail(plot.broker.email)"
+              color="primary"
+              class="material-icons"
+              data-icon="near_me"
+            ></ion-icon>
+          </div>
+        </div>
+      </ion-card>
+    </div>
+
+    }@else {
+    <div class="ion-margin-top">
+      <ion-card class="broker">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-[10px]">
+            <div class="avatar">
+              <img src="assets/images/logo.png" />
+            </div>
+            <div class="flex flex-col gap-[4px]">
+              <h3>{{'PLOT_DETAILS.Contact' | translate}}</h3>
+              <ion-text color="primary"><p>'' Makelaardij NV</p></ion-text>
+            </div>
+          </div>
+
+          <div class="icons flex items-center gap-[6px]">
+            <ion-icon
+              (click)="openPhoneNumber('+597 422 644',$event)"
+              color="primary"
+              class="material-icons"
+              data-icon="phone_in_talk"
+            ></ion-icon>
+
+            <ion-icon
+              (click)="openEmail('info@''.com')"
+              color="primary"
+              class="material-icons"
+              data-icon="near_me"
+            ></ion-icon>
+          </div>
+        </div>
+      </ion-card>
+    </div>
+
+    } @if(!isSimilarPlotsLoading){
+    <div class="ion-margin-top">
+      <h3>{{'PLOT_DETAILS.SimilarPlots' | translate}}</h3>
+    </div>
+
+    <div class="ion-margin-top ion-margin-bottom">
+      <swiper-container
+        slides-per-view="1.2"
+        space-between="10"
+        loop-additional-slides="4"
+        class="homes-swiper"
+      >
+        @for (plot of plots; track plot.id) {
+        <swiper-slide class="homes-slide">
+          <app-plot-view [plot]="plot"></app-plot-view>
+        </swiper-slide>
+
+        }
+      </swiper-container>
+    </div>
+
+    }
+  </div>
+  }@else{
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+
+  }
+</ion-content>

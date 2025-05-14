@@ -1,0 +1,171 @@
+<ion-header>
+  <ion-toolbar>
+ @if(!isLoading){
+    <ion-buttons slot="start">
+      @if(isModal){
+      <ion-button (click)="dismiss()" fill="icon-only">
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+      }@else {
+      <ion-back-button
+        defaultHref="/"
+        text=""
+        icon="chevron-back"
+      ></ion-back-button>
+      }
+    </ion-buttons>
+    <ion-title>{{'HOLIDAY_PROPERTY_LISTING.VacationRentals' | translate}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-segment [(ngModel)]="viewMode" mode="ios">
+        <ion-segment-button
+        value="grid"
+        class="toggle-btn"
+        [class.active]="viewMode === 'grid'"
+      >
+        <ion-icon name="grid-outline"></ion-icon>
+      </ion-segment-button>
+
+        <ion-segment-button
+          value="list"
+          class="toggle-btn"
+          [class.active]="viewMode === 'list'"
+        >
+          <ion-icon name="list-outline"></ion-icon>
+        </ion-segment-button>
+
+      </ion-segment>
+
+      </ion-buttons>
+
+
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content >
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing..."
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+
+  @if(!isLoading){ @if(!isModal){
+  <ion-card class="search-container">
+    <div class="input-box">
+      <ion-input
+        class="search-input"
+        lines="none"
+        mode="md"
+        name="searchQuery"
+        [placeholder]="'HOLIDAY_PROPERTY_LISTING.Search' | translate"
+        [(ngModel)]="searchQuery"
+      ></ion-input>
+    </div>
+
+    <div class="flex gap-[6px] items-center">
+      <div class="input-box">
+        <ion-select
+          [(ngModel)]="selectedPropertyType"
+          name="propertyType"
+          [placeholder]="'HOLIDAY_PROPERTY_LISTING.PropertyType' | translate"
+        >
+          @for (propertyType of homeTypes; track $index) {
+          <ion-select-option [value]="propertyType.value"
+            >{{propertyType.title}}</ion-select-option
+          >
+          }
+        </ion-select>
+      </div>
+      <div class="input-box">
+        <ion-select
+          [(ngModel)]="selectedDistrict"
+          name="district"
+          [placeholder]="'HOLIDAY_PROPERTY_LISTING.District' | translate"
+        >
+          @for (district of districts; track $index) {
+          <ion-select-option [value]="district.value"
+            >{{district.title}}</ion-select-option
+          >
+          }
+        </ion-select>
+      </div>
+    </div>
+
+    <div class="flex items-center">
+      <div class="input-box">
+        <ion-select
+          [(ngModel)]="selectedRentalPricing"
+          [placeholder]="'HOLIDAY_PROPERTY_LISTING.PriceRange' | translate"
+          name="pricing"
+        >
+          @for (pricing of pricings; track $index) {
+          <ion-select-option [value]="pricing.value"
+            >{{pricing.name}}</ion-select-option
+          >
+          }
+        </ion-select>
+      </div>
+    </div>
+
+    <div class="search-btn">
+      <ion-button
+        [disabled]="!appliedFilter"
+        (click)="onResetFilter()"
+        color="secondary"
+        shape="round"
+        expand="full"
+        >{{'HOLIDAY_PROPERTY_LISTING.Reset' | translate}}</ion-button
+      >
+
+      <ion-button
+        (click)="onApplyFilter()"
+        color="primary"
+        shape="round"
+        expand="full"
+        >{{'HOLIDAY_PROPERTY_LISTING.Search' | translate}}</ion-button
+      >
+    </div>
+  </ion-card>
+  }
+
+  @if(viewMode === 'grid'){
+    <ion-grid style="padding:0" class="ion-margin-top">
+      <ion-row>
+          @for (home of homes; track home.id) {
+            <ion-col size="6">
+          <app-holiday-home-view
+          [viewMode]="viewMode"
+          [home]="home"></app-holiday-home-view>
+          </ion-col>
+          }
+
+      </ion-row>
+    </ion-grid>
+  }@else {
+    <div class="flex flex-col gap-[10px] ion-padding">
+      @for (home of homes; track home.id) {
+      <app-holiday-home-view [home]="home"></app-holiday-home-view>
+      }
+    </div>
+
+  }
+
+  }@else if(isLoading && !isRefreshing){
+    <div class="h-full flex flex-col items-center justify-center">
+      <app-custom-spinner></app-custom-spinner>
+    </div>
+
+  }
+  <ion-infinite-scroll
+    [disabled]="isScrollDisabled"
+    threshold="10px"
+    position="bottom"
+    (ionInfinite)="onIonInfinite($event)"
+  >
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

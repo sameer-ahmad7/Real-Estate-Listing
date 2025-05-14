@@ -1,0 +1,122 @@
+<ion-card
+[class.grid-listing]="viewMode() === 'grid'"
+class="listing-card" (click)="gotoDetails()">
+    <div class="relative">
+      <img
+      [src]="
+        property().featured_media_thumbnail
+          ? (property().featured_media_thumbnail | secureUrl)
+          :'assets/images/logo.png'"
+      loading="lazy"
+    />
+
+    <ion-chip class="price-chip">
+      @if(!isRental()){
+        @if(property()['wpcf-prijs-zonder-punten']){ @if(property().eur){
+          {{ property().eur }}
+          }@else if(property().usd){
+          {{ property().usd }}
+          }@else {
+          {{ property().srd }}
+          } }@else {
+            {{'BUSINESS_PROPERTY_VIEW.Negotiable' | translate}}
+           }
+
+      }@else {
+        @if(property()['wpcf-huurprijs-pm-zp']){ @if(property().eur){
+          {{ property().eur }}
+          }@else if(property().usd){
+          {{ property().usd }}
+          }@else {
+          {{ property().srd }}
+          } {{'BUSINESS_PROPERTY_VIEW.permonth' | translate}}
+        }@else {
+          {{'BUSINESS_PROPERTY_VIEW.Negotiable' | translate}}
+        }
+
+      }
+    </ion-chip>
+
+
+    </div>
+
+  <ion-card-header class="p-[0] px-[6px]">
+    <div class="flex items-center justify-between">
+      <h3 class="text-[black] title" [innerHTML]="property().title.rendered"></h3>
+    </div>
+  </ion-card-header>
+  <ion-card-content class="mt-[10px] px-[6px]">
+    <div class="flex items-center">
+      <p class="text-[black] overflow-hidden whitespace-nowrap text-ellipsis">
+        @if(isRental()){
+        {{ property()["toolset-meta"]["details-huurpand"].subtitel.raw }}
+        }@else {
+        {{ property()["toolset-meta"]["details-kooppand"].subtitel.raw }} }
+      </p>
+    </div>
+
+
+    @if(property()['wpcf-buurt'] || property().district){
+    <div
+    (click)="$event.stopImmediatePropagation();openGoogleMaps()"
+
+    class="flex items-center gap-[6px] ion-margin-top">
+      <ion-icon
+        color="primary"
+        class="material-icons"
+        data-icon="pin_drop"
+      ></ion-icon>
+      <p class="text-[black] overflow-hidden whitespace-nowrap text-ellipsis">
+        @if(property()['wpcf-buurt']){
+        {{ property()["wpcf-buurt"] }}, } @if(property().district){
+        {{ property().district }}
+        }
+      </p>
+    </div>
+
+    } @if(distance){
+    <div
+
+    (click)="$event.stopImmediatePropagation();openGoogleMaps()"
+
+    class="flex items-center gap-[6px] ion-margin-top">
+      <ion-icon
+        color="primary"
+        class="material-icons"
+        data-icon="route"
+      ></ion-icon>
+      <p class="text-[black]">{{ distance }}</p>
+    </div>
+
+    }
+    <div class="info-btns ion-margin-top">
+      @if(property()['wpcf-bouwoppervlakte']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons-outlined"
+          data-icon="domain"
+        ></ion-icon>
+        <p class="text-[black]">
+          {{ property()["wpcf-bouwoppervlakte"] | dotToComma }} m²  {{'BUSINESS_PROPERTY_VIEW.Office' | translate}}
+
+        </p>
+      </div>
+
+      } @if(property()['wpcf-perceeloppervlakte']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons-outlined"
+          data-icon="zoom_out_map"
+        ></ion-icon>
+        <p class="text-[black]">
+          {{ property()["wpcf-perceeloppervlakte"] | dotToComma }} m² {{'BUSINESS_PROPERTY_VIEW.Property' | translate}}
+
+        </p>
+      </div>
+
+      }
+    </div>
+  </ion-card-content>
+</ion-card>

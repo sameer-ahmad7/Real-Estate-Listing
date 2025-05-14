@@ -1,0 +1,141 @@
+@if(!isForSaleByOwner()){
+  <ion-header>
+    <ion-toolbar>
+ @if(!isLoading){
+      <ion-buttons slot="start">
+        @if(isModal){
+        <ion-button (click)="dismiss()" fill="icon-only">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+        }@else {
+        <ion-back-button
+          defaultHref="/"
+          text=""
+          icon="chevron-back"
+        ></ion-back-button>
+        }
+      </ion-buttons>
+      <ion-title>
+        @if(isRental){
+          {{'HOME_LISTING.PropertiesforRent' | translate}}
+         }@else {
+          {{'HOME_LISTING.PropertiesforSale' | translate}}
+          }
+      </ion-title>
+
+      <ion-buttons slot="end">
+        <ion-segment [(ngModel)]="viewMode" mode="ios">
+          <ion-segment-button
+          value="grid"
+          class="toggle-btn"
+          [class.active]="viewMode === 'grid'"
+        >
+          <ion-icon name="grid-outline"></ion-icon>
+        </ion-segment-button>
+
+          <ion-segment-button
+            value="list"
+            class="toggle-btn"
+            [class.active]="viewMode === 'list'"
+          >
+            <ion-icon name="list-outline"></ion-icon>
+          </ion-segment-button>
+
+        </ion-segment>
+
+        </ion-buttons>
+
+      }
+    </ion-toolbar>
+  </ion-header>
+
+}
+
+@if(!isForSaleByOwner()){
+  <ion-content  [forceOverscroll]="true">
+    <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+      <ion-refresher-content
+        pullingIcon="chevron-down-circle-outline"
+        pullingText="Pull to refresh"
+        refreshingSpinner="circles"
+        refreshingText="Refreshing..."
+      >
+      </ion-refresher-content>
+    </ion-refresher>
+
+    <ng-container [ngTemplateOutlet]="homeListing"></ng-container>
+  </ion-content>
+}@else{
+  @if(isLoading){
+    <div class="h-full flex flex-col items-center justify-center">
+      <app-custom-spinner></app-custom-spinner>
+        </div>
+  }@else{
+    <ng-container [ngTemplateOutlet]="homeListing"></ng-container>
+  }
+
+}
+<ng-template #homeListing>
+  @if(!isLoading){ @if(!isModal){
+    <app-home-filter
+    (onResetFilter)="onResetFilter()"
+    (onApplyFilter)="onApplyFilter($event)"
+    [homeTypes]="homeTypes"
+    [districts]="districts"
+    [homeTypes]="homeTypes"
+    [isRental]="isRental"
+    [plotAreas]="plotAreas"
+    [constructionAreas]="constructionAreas"
+    [preFilter]="appliedFilter"
+    [landTitles]="landTitles"
+    [pricings]="pricings"
+    ></app-home-filter>
+      }
+      @if(viewMode === 'grid'){
+        <ion-grid
+        style="padding:0"
+        class="ion-margin-top">
+          <ion-row>
+              @for (home of homes; track home.id) {
+                <ion-col size="6">
+                <app-home-view
+                [viewMode]="viewMode"
+                [isRental]="isRental" [home]="home"></app-home-view>
+                </ion-col>
+                } @empty {
+                  <div class="flex items-center justify-center mt-[32px]">
+                    <p class="text-center" class="text-center">{{'HOME_LISTING.NoProperties' | translate}}</p>
+                    </div>
+                }
+
+          </ion-row>
+        </ion-grid>
+
+      }@else{
+      <div class="flex flex-col gap-[10px] ion-padding">
+        @for (home of homes; track home.id) {
+        <app-home-view [isRental]="isRental" [home]="home"></app-home-view>
+        } @empty {
+          <div class="flex items-center justify-center mt-[32px]">
+            <p class="text-center" class="text-center">{{'HOME_LISTING.NoProperties' | translate}}</p>
+            </div>
+        }
+      </div>
+    }
+      }@else if(isLoading && !isRefreshing){
+        <div class="h-full flex flex-col items-center justify-center">
+          <app-custom-spinner></app-custom-spinner>
+
+        </div>
+
+      }
+      <ion-infinite-scroll
+        [disabled]="isScrollDisabled"
+        threshold="10px"
+        position="bottom"
+        (ionInfinite)="onIonInfinite($event)"
+      >
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+
+</ng-template>

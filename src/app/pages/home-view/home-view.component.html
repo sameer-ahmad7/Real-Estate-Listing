@@ -1,0 +1,112 @@
+<ion-card
+[class.grid-listing]="viewMode() === 'grid'"
+class="listing-card" (click)="gotoDetails()">
+    <div class="relative">
+
+      <ion-chip class="price-chip">
+        @if(!isRental()){
+          @if(home()['wpcf-prijs-zonder-punten']){ @if(home().eur){
+            {{ home().eur }}
+            }@else if(home().usd){
+            {{ home().usd }}
+            }@else {
+            {{ home().srd }}
+            } }@else {
+              {{'HOME_VIEW.Negotiable'| translate}}
+             }
+            }@else {
+              @if(home()['wpcf-huurprijs-pm-zp']){
+                {{
+                  home()["wpcf-huurprijs-pm-zp"] | currency : "EUR" : "symbol" : "1.0-2"
+                }}
+                {{'HOME_VIEW.permonth' | translate}} }@else {
+                {{'HOME_VIEW.Negotiable'| translate}}
+                 }
+
+        }
+      </ion-chip>
+      <img
+      [src]="
+        home().featured_media_thumbnail
+          ? (home().featured_media_thumbnail | secureUrl)
+          :'assets/images/logo.png'"
+      loading="lazy"
+    />
+
+    </div>
+  <ion-card-header class="p-[0] px-[6px]">
+    <div class="flex items-center justify-between">
+      <h3 class="text-[black] title" [innerHTML]="home().title.rendered"></h3>
+    </div>
+  </ion-card-header>
+  <ion-card-content class="mt-[10px] px-[6px]">
+
+
+
+    @if(home()['wpcf-buurt'] || home().district){
+    <div
+    (click)="$event.stopImmediatePropagation();openGoogleMaps()"
+    class="flex items-center gap-[6px] ion-margin-top">
+      <ion-icon
+        color="primary"
+        class="material-icons"
+        data-icon="pin_drop"
+      ></ion-icon>
+      <p class="text-[black] overflow-hidden whitespace-nowrap text-ellipsis">
+        @if(home()['wpcf-buurt']){
+        {{ home()["wpcf-buurt"] }}, } @if(home().district){
+        {{ home().district }}
+        }
+      </p>
+    </div>
+    } @if(distance){
+    <div
+    (click)="$event.stopImmediatePropagation();openGoogleMaps()"
+    class="flex items-center gap-[6px] ion-margin-top">
+      <ion-icon
+        color="primary"
+        class="material-icons"
+        data-icon="route"
+      ></ion-icon>
+      <p class="text-[black]">{{ distance }}</p>
+    </div>
+
+    }
+
+    <div class="info-btns ion-margin-top">
+      @if(home()['wpcf-aantal-slaapkamers']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons"
+          data-icon="bed"
+        ></ion-icon>
+        <p class="text-[black]">{{ home()["wpcf-aantal-slaapkamers"] }} {{'HOME_VIEW.Beds' | translate}}</p>
+      </div>
+
+      } @if(home()['wpcf-aantal-badkamers']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons-outlined"
+          data-icon="bathroom"
+        ></ion-icon>
+        <p class="text-[black]">{{ home()["wpcf-aantal-badkamers"] }} {{'HOME_VIEW.Baths' | translate}}</p>
+      </div>
+
+      } @if(home()['wpcf-bouwoppervlakte']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons-outlined"
+          data-icon="filter_none"
+        ></ion-icon>
+        <p class="text-[black]">
+          {{ home()["wpcf-bouwoppervlakte"] | dotToComma }} m²
+        </p>
+      </div>
+
+      }
+    </div>
+  </ion-card-content>
+</ion-card>

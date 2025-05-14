@@ -1,0 +1,31 @@
+.icons {
+  ion-icon {
+    padding: 4px;
+    background: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.065);
+    border-radius: 50%;
+    font-size: 24px;
+  }
+}
+
+.avatar{
+  width: 95px;
+  height: 95px;
+}
+
+.container{
+  border: 1px solid var(--ion-color-primary);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+h4{
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+p{
+  font-size: 12px;
+}
+
+

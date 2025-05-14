@@ -1,0 +1,43 @@
+<div class="fullscreen-modal">
+  <!-- Top Action Buttons -->
+  <div class="fullscreen-actions">
+    <div class="action-buttons">
+      <ion-button fill="clear" class="action-btn" (click)="dismissModal()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+  <!-- Full-Screen Swiper -->
+  <swiper-container
+    init="false"
+    #fullSwiperElement
+    class="fullscreen-swiper"
+    (swiperslidechange)="updateFullViewIndex($event)"
+  >
+    @for (img of images(); track $index) {
+    <swiper-slide>
+      <div class="swiper-zoom-container">
+        <img [src]="img" class="full-img" />
+      </div>
+    </swiper-slide>
+
+    }
+  </swiper-container>
+
+  <div
+    class="slides-control flex items-center justify-center z-[2222] w-full absolute bottom-[0px]"
+  >
+    <ion-button class="prev-btn" fill="clear" (click)="goToPrevFullSlide()">
+      <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+    </ion-button>
+    <div class="slide-counter">
+      {{ currentIndex + 1 }} / {{ images().length }}
+    </div>
+
+    <ion-button class="next-btn" fill="clear" (click)="goToNextFullSlide()">
+      <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+</div>
+
+<!-- Custom Navigation -->

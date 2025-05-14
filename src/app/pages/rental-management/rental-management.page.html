@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        text=""
+        icon="chevron-back"
+        defaultHref="/tabs/more"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{'RENTAL_MANAGEMENT.RentalManagement' | translate}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if(isLoading){
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>  </div>
+  }@else {
+  <div class="image-container">
+    <img [src]="imgSrc" />
+  </div>
+
+    <div class="ion-margin-top" [innerHTML]="htmlContent"></div>
+
+    <div class="ion-margin-top flex items-center justify-center w-full">
+      <ion-button (click)="downloadAndOpenPDF()" color="primary">
+        {{'RENTAL_MANAGEMENT.DownloadBrochure' | translate}}
+      </ion-button>
+    </div>
+
+  <div class="ion-margin-top">
+    <ion-text color="primary">
+      <h3 class="p-[10px]">Contact Us</h3>
+    </ion-text>
+    <app-contact-us [isChildComponent]="true"></app-contact-us>
+  </div>
+
+  }
+</ion-content>

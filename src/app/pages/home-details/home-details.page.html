@@ -1,0 +1,394 @@
+<ion-content fullscreen>
+  <ion-header [class.media]="!isLoading && home">
+    @if(!isLoading){
+    <div class="header-image">
+      <img
+        [src]="home.featured_media_thumbnail?(home.featured_media_thumbnail | secureUrl):'assets/images/logo.png'"
+      />
+    </div>
+
+    }
+    <ion-toolbar>
+      @if(!isLoading) {
+      <ion-buttons slot="start">
+        <div class="custom-btn back-btn">
+          <ion-back-button
+            defaultHref="/tabs/home"
+            text=""
+            icon="chevron-back"
+          ></ion-back-button>
+        </div>
+      </ion-buttons>
+      <ion-buttons slot="end">
+        <div class="custom-btn menu-btn">
+          <ion-button id="menu-trigger" fill="clear">
+            <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+          </ion-button>
+        </div>
+        <ion-popover #popover trigger="menu-trigger" triggerAction="click">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item (click)="toggleFavorite(popover)">
+                  <ion-icon
+                    slot="start"
+                    color="primary"
+                    class="material-icons"
+                    data-icon="favorite"
+                  ></ion-icon>
+                  @if(isFavorite){ {{"HOME_DETAILS.RemovefromFavorites" |
+                  translate}} }@else { {{"HOME_DETAILS.AddtoFavorites" |
+                  translate}} }
+                </ion-item>
+                @if(mapURL){
+                <ion-item (click)="openGoogleMaps()">
+                  <ion-icon
+                    slot="start"
+                    color="primary"
+                    class="material-icons"
+                    data-icon="directions"
+                  ></ion-icon>
+                  {{"HOME_DETAILS.Directions" | translate}}
+                </ion-item>
+                }
+                <ion-item (click)="share()">
+                  <ion-icon
+                    slot="start"
+                    color="primary"
+                    class="material-icons"
+                    data-icon="share"
+                  ></ion-icon>
+                  {{"HOME_DETAILS.Share" | translate}}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </ion-buttons>
+
+      }
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-modal
+    class="full-view"
+    [isOpen]="isFullViewOpen"
+    (didDismiss)="dismissModal()"
+  >
+    <ng-template>
+      <app-fullscreen-view
+        [fullViewIndex]="galleryViewIndex"
+        [images]="galleryImages"
+      ></app-fullscreen-view>
+    </ng-template>
+  </ion-modal>
+
+  @if(!isLoading){
+  <div class="ion-padding">
+    <div class="flex flex-col gap-[6px]">
+      <h2 class="text-[black] title" [innerHTML]="home.title.rendered"></h2>
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons"
+          data-icon="pin_drop"
+        ></ion-icon>
+        <p class="text-[black]">
+          @if(home['wpcf-buurt']){ {{ home["wpcf-buurt"] }}, }
+          @if(home.district){ {{ home.district }} }
+        </p>
+      </div>
+
+      @if(distance){
+      <div class="flex items-center gap-[6px] ion-margin-top">
+        <ion-icon
+          color="primary"
+          class="material-icons"
+          data-icon="route"
+        ></ion-icon>
+        <p class="text-[black]">{{ distance }}</p>
+      </div>
+
+      }
+    </div>
+    <div class="ion-margin-top"></div>
+    <ion-card class="price-card">
+      @if(isRental){
+      <div class="flex items-center justify-center flex-col gap-[10px]">
+        @if(home['wpcf-huurprijs-pm-zp']){
+        <ion-segment mode="ios" [(ngModel)]="selectedSegment">
+          <ion-segment-button value="eur">
+            <ion-label>EURO</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="usd">
+            <ion-label>USD</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="srd">
+            <ion-label>SRD</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <ion-text class="w-full" color="primary">
+          <p class="rental-price">
+            @if(home['wpcf-huurprijs-pm-zp']){ @if(selectedSegment==='eur'){
+            {{home.eur}} }@else if(selectedSegment==='usd'){ {{home.usd}} }@else
+            { {{home.srd}} } / {{"HOME_DETAILS.Monthly" | translate}} }
+          </p>
+        </ion-text>
+        }@else {
+        <ion-text class="w-full" color="primary">
+          <p class="rental-price">
+            {{"HOME_DETAILS.PriceisNegotiable" | translate}}
+          </p>
+        </ion-text>
+
+        }
+      </div>
+      }@else {
+      <div class="flex flex-col items-center justify-center gap-[10px]">
+        @if(home['wpcf-prijs-zonder-punten']){
+        <ion-segment mode="ios" [(ngModel)]="selectedSegment">
+          <ion-segment-button value="eur">
+            <ion-label>EURO</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="usd">
+            <ion-label>USD</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="srd">
+            <ion-label>SRD</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <ion-button fill="outline" class="price-btn">
+          @if(home['wpcf-prijs-zonder-punten']){ @if(selectedSegment==='eur'){
+          {{home.eur }} }@else if(selectedSegment==='usd'){ {{home.usd}} }@else
+          { {{home.srd}} } }
+        </ion-button>
+        }@else {
+        <ion-button fill="outline" class="price-btn">
+          {{"HOME_DETAILS.PriceisNegotiable" | translate}}
+        </ion-button>
+        }
+      </div>
+      }
+      <div class="card-content">
+        <h3 class="ion-margin-top">
+          {{"HOME_DETAILS.Highlights" | translate}}
+        </h3>
+        <div class="info-btns flex items-center justify-between ion-margin-top">
+          @if(home['wpcf-aantal-slaapkamers']){
+          <div class="flex items-center gap-[6px]">
+            <ion-icon
+              color="primary"
+              class="material-icons"
+              data-icon="bed"
+            ></ion-icon>
+            <p class="text-[black]">
+              {{ home["wpcf-aantal-slaapkamers"] }} {{"HOME_DETAILS.Beds" |
+              translate}}
+            </p>
+          </div>
+
+          } @if(home['wpcf-aantal-badkamers']){
+          <div class="flex items-center gap-[6px]">
+            <ion-icon
+              color="primary"
+              class="material-icons-outlined"
+              data-icon="bathroom"
+            ></ion-icon>
+            <p class="text-[black]">
+              {{ home["wpcf-aantal-badkamers"] }} {{"HOME_DETAILS.Baths" |
+              translate}}
+            </p>
+          </div>
+
+          } @if(home['wpcf-bouwoppervlakte']){
+          <div class="flex items-center gap-[6px]">
+            <ion-icon
+              color="primary"
+              class="material-icons-outlined"
+              data-icon="filter_none"
+            ></ion-icon>
+            <p class="text-[black]">
+              {{ home["wpcf-bouwoppervlakte"] | dotToComma }} m²
+            </p>
+          </div>
+          }
+        </div>
+        <ion-grid class="ion-margin-top ion-no-padding">
+          <ion-row>
+            <ion-col size="6" class="ion-margin-top">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{"HOME_DETAILS.Status" | translate}}:
+                </p>
+                <p>{{home.status}}</p>
+              </div>
+            </ion-col>
+            <ion-col size="6" class="ion-margin-top">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{"HOME_DETAILS.Type" | translate}}:
+                </p>
+                <p>{{home.type}}</p>
+              </div>
+            </ion-col>
+            @if(home['wpcf-bouwoppervlakte']){
+            <ion-col class="ion-margin-top" size="6">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{"HOME_DETAILS.BuildingArea" | translate}}:
+                </p>
+                <p>{{home['wpcf-bouwoppervlakte'] | dotToComma}} m²</p>
+              </div>
+            </ion-col>
+            }
+
+            <ion-col size="6" class="ion-margin-top">
+              <div class="flex items-center gap-[10px]">
+                <p class="text-[black] font-[600]">
+                  {{"HOME_DETAILS.Floors" | translate}}:
+                </p>
+                <p>{{home['wpcf-etages']}}</p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div
+          class="description flex items-center justify-between ion-margin-top"
+        >
+          <h3>{{"HOME_DETAILS.Description" | translate}}</h3>
+          <ion-chip>{{home ['wpcf-object-code']}}</ion-chip>
+        </div>
+        <div
+          (click)="toggleContent()"
+          class="ion-margin-top"
+          [innerHTML]="displayedContent"
+        ></div>
+      </div>
+    </ion-card>
+    @if(home.gallery_thumbnails.length>0){
+    <div class="ion-margin-top">
+      <h3>{{"HOME_DETAILS.Gallery" | translate}}</h3>
+    </div>
+    <swiper-container
+      (swiperslidechange)="updateGalleryViewIndex($event)"
+      #slides
+      init="false"
+      class="custom-swiper ion-margin-top"
+    >
+      @for (gallery of home.gallery_thumbnails;track $index) {
+      <swiper-slide (click)="openFullView()" class="custom-slide">
+        <img [src]="gallery.thumbnail| secureUrl" />
+      </swiper-slide>
+      }
+    </swiper-container>
+    } @if(mapURL){
+    <div class="ion-margin-top map-img">
+      <h3>{{"HOME_DETAILS.FindonMap" | translate}}</h3>
+      <img
+        (click)="openGoogleMaps()"
+        [src]="mapURL | secureUrl"
+        alt="Location"
+      />
+    </div>
+    } @if(home.broker){
+    <div class="ion-margin-top">
+      <ion-card class="broker">
+        <div class="flex items-center justify-between">
+          <div
+            [routerLink]="['/agents',home.broker.id]"
+            class="flex items-center gap-[10px]"
+          >
+            <div class="avatar">
+              <img [src]="home.broker.image | secureUrl" />
+            </div>
+            <div class="flex flex-col gap-[4px]">
+              <h3>{{home.broker.title}}</h3>
+              <ion-text color="primary"
+                ><p>{{"HOME_DETAILS.Agent" | translate}}</p></ion-text
+              >
+            </div>
+          </div>
+
+          <div class="icons flex items-center gap-[6px]">
+            <ion-icon
+              (click)="openPhoneNumber(home.broker.tel,$event)"
+              color="primary"
+              class="material-icons"
+              data-icon="phone_in_talk"
+            ></ion-icon>
+
+            <ion-icon
+              (click)="openEmail(home.broker.email)"
+              color="primary"
+              class="material-icons"
+              data-icon="near_me"
+            ></ion-icon>
+          </div>
+        </div>
+      </ion-card>
+    </div>
+
+    }@else {
+    <div class="ion-margin-top">
+      <ion-card class="broker">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-[10px]">
+            <div class="avatar">
+              <img src="assets/images/logo.png" />
+            </div>
+            <div class="flex flex-col gap-[4px]">
+              <h3>{{"HOME_DETAILS.Contact" | translate}}</h3>
+              <ion-text color="primary"><p>'' Makelaardij NV</p></ion-text>
+            </div>
+          </div>
+
+          <div class="icons flex items-center gap-[6px]">
+            <ion-icon
+              (click)="openPhoneNumber('+597 422 644',$event)"
+              color="primary"
+              class="material-icons"
+              data-icon="phone_in_talk"
+            ></ion-icon>
+
+            <ion-icon
+              (click)="openEmail('info@''.com')"
+              color="primary"
+              class="material-icons"
+              data-icon="near_me"
+            ></ion-icon>
+          </div>
+        </div>
+      </ion-card>
+    </div>
+
+    } @if(!isSimilarHomesLoading){
+    <div class="ion-margin-top">
+      <h3>{{"HOME_DETAILS.SimilarHouses" | translate}}</h3>
+    </div>
+
+    <div class="ion-margin-top ion-margin-bottom">
+      <swiper-container
+        pagination="true"
+        slides-per-view="1.2"
+        space-between="10"
+        loop-additional-slides="4"
+        class="homes-swiper"
+      >
+        @for (home of homes; track home.id) {
+        <swiper-slide class="homes-slide">
+          <app-home-view [isRental]="isRental" [home]="home"></app-home-view>
+        </swiper-slide>
+
+        }
+      </swiper-container>
+    </div>
+
+    }
+  </div>
+  }@else{
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+
+  }
+</ion-content>

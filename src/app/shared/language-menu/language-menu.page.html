@@ -1,0 +1,15 @@
+<ion-content class="ion-padding">
+<ion-list>
+    <ion-item (click)="setLanguage('en')">
+      <img
+      class="w-[24px] h-[24px]"
+      slot="start" src="assets/images/languages/english.png" />
+      <ion-label>{{'LANGUAGE_MENU.en' | translate}}</ion-label>
+    </ion-item>
+    <ion-item
+      (click)="setLanguage('nl')">
+      <img  class="w-[24px] h-[24px]" slot="start" src="assets/images/languages/dutch.png" />
+      <ion-label>{{'LANGUAGE_MENU.nl' | translate}}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

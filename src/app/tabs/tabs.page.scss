@@ -1,0 +1,15 @@
+ion-tab-bar {
+  padding-bottom: var(--safe-area-inset-bottom);
+  --background: var(--bg-color);
+  ion-tab-button {
+    ion-icon {
+      font-size: 24px;
+      color: var(--text-light);
+    }
+    &.tab-selected {
+      ion-icon {
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+}

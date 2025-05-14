@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+      defaultHref="/tabs/more"
+      text=""
+      icon="chevron-back"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{'AUCTIONS.AuctionsinSuriname' | translate}}</ion-title>
+  </ion-toolbar>
+  <div class="outer">
+    <ion-chip
+    (click)="onSelectSegment('auction')"
+    [class.active]="selectedSegment==='auction'"
+    >{{'AUCTIONS.Auctions' | translate}}</ion-chip>
+    <ion-chip
+    (click)="onSelectSegment('auctioned')"
+    [class.active]="selectedSegment==='auctioned'"
+    >{{'AUCTIONS.AuctionedItems' | translate}}</ion-chip>
+
+</div>
+
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  @if(isLoading){
+    <div class="h-full flex flex-col items-center justify-center">
+      <app-custom-spinner></app-custom-spinner>
+        </div>
+  }@else {
+    <div (click)="toggleContent()" class="auction-card" [innerHTML]="displayedContent" >
+    </div>
+<div class="ion-margin-top">
+  @if(selectedSegment==='auction'){
+    @if(!isAuctionLoading){
+      @if(auctionProperties.length>0){
+        <swiper-container
+        #auctionSlides
+        init="false"
+        class="custom-swiper"
+      >
+      @for (auctionProperty of auctionProperties; track auctionProperty.id) {
+          <swiper-slide class="custom-slide">
+            <app-auction-view
+            [property]="auctionProperty"
+            ></app-auction-view>
+          </swiper-slide>
+      }
+    </swiper-container>
+      }@else {
+        <div class="mt-[32px]">
+          <p class="text-center">{{'AUCTIONS.NoAuctionOnline' | translate}}
+          </p>
+        </div>
+      }
+    }
+    @else {
+      <div class="mt-[32px] flex items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+            </div>
+    }
+
+  }@else {
+    @if(!isAuctionedLoading){
+      @if(auctionedProperties.length>0){
+        <swiper-container
+        #auctionSlides
+        init="false"
+        class="custom-swiper"
+      >
+      @for (auctionedProperty of auctionedProperties; track auctionedProperty.id) {
+          <swiper-slide class="custom-slide">
+            <app-auction-view
+            [property]="auctionedProperty"
+            ></app-auction-view>
+          </swiper-slide>
+      }
+    </swiper-container>
+      }@else {
+        <div class="mt-[32px]">
+          <p class="text-center">{{'AUCTIONS.Noauctionsfound' | translate}}
+          </p>
+        </div>
+      }
+    }
+    @else {
+      <div class="mt-[32px] flex items-center justify-center">
+        <app-custom-spinner></app-custom-spinner>
+      </div>
+    }
+
+  }
+</div>
+  }
+</ion-content>

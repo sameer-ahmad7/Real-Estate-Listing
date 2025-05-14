@@ -1,0 +1,120 @@
+<ion-header >
+  <ion-toolbar>
+    <ion-title  class="centered">{{'FAVORITES.Favorites' | translate}}</ion-title>
+    <ion-buttons slot="end">
+      @if(languages$ | async; as language){
+        <ion-button (click)="openLanguageMenu($event)">
+          <img id="language" class="w-[24px] h-[24px]" [src]="language==='en'?'assets/images/languages/english.png':'assets/images/languages/dutch.png'"/>
+        </ion-button>
+      }
+      <!-- <ion-segment [(ngModel)]="viewMode" mode="ios">
+        <ion-segment-button
+        value="grid"
+        class="toggle-btn"
+        [class.active]="viewMode === 'grid'"
+      >
+        <ion-icon name="grid-outline"></ion-icon>
+      </ion-segment-button>
+
+        <ion-segment-button
+          value="list"
+          class="toggle-btn"
+          [class.active]="viewMode === 'list'"
+        >
+          <ion-icon name="list-outline"></ion-icon>
+        </ion-segment-button>
+
+      </ion-segment> -->
+
+
+    </ion-buttons>
+  </ion-toolbar>
+  <div class="outer">
+    @for (segment of segmentOptions; track $index) {
+      <ion-chip
+      (click)="onSelectSegment(segment)"
+      [class.active]="selectedSegment.listType===segment.listType"
+      >{{segment.title | translate}}</ion-chip>
+    }
+  </div>
+
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if(!isLoading){
+    <div class="ion-margin-top h-full">
+      @if(selectedSegment.listType===listTypeEnum.BUSINESSPROPERTY){
+        @for (property of businesses; track $index) {
+          <app-business-property-view
+          [isRental]="false"
+          [property]="property"
+          ></app-business-property-view>
+        }@empty {
+          <div class="h-full flex flex-col items-center justify-center">
+         <p> {{'FAVORITES.NoBusinessProperties'|translate}}</p>
+         </div>
+        }
+      }
+      @else if(selectedSegment.listType===listTypeEnum.RENTALBUSINESSPROPERTY){
+        @for (property of rentalBusinesses; track $index) {
+          <app-business-property-view
+          [isRental]="true"
+          [property]="property"
+          ></app-business-property-view>
+        }@empty {
+          <div class="h-full flex flex-col items-center justify-center">
+         <p> {{'FAVORITES.NoRentalBusinessProperties'|translate}}</p>
+         </div>
+        }
+
+      }@else if(selectedSegment.listType===listTypeEnum.HOME){
+        @for (home of homes; track $index) {
+          <app-home-view
+          [isRental]="false"
+          [home]="home"
+          ></app-home-view>
+        }@empty {
+          <div class="h-full flex flex-col items-center justify-center">
+          <p>{{'FAVORITES.NoPropertiesToShow' | translate}}</p>
+          </div>
+        }
+      }@else if(selectedSegment.listType===listTypeEnum.RENTALHOME){
+        @for (home of rentalHomes; track $index) {
+          <app-home-view
+          [isRental]="true"
+          [home]="home"
+          ></app-home-view>
+        }@empty {
+          <div class="h-full flex flex-col items-center justify-center">
+          <p>{{'FAVORITES.NoRentalPropertiesToShow' | translate}}</p>
+          </div>
+        }
+      }@else if(selectedSegment.listType===listTypeEnum.PLOT){
+        @for (plot of plots; track $index) {
+          <app-plot-view
+          [plot]="plot"
+          ></app-plot-view>
+        }@empty {
+          <div class="h-full flex flex-col items-center justify-center">
+          <p>{{'FAVORITES.NoPlots' | translate}}</p>
+          </div>
+        }
+      }@else {
+        @for (property of properties; track $index) {
+          <app-holiday-home-view
+          [home]="property"
+          ></app-holiday-home-view>
+        }@empty {
+          <div class="h-full flex flex-col items-center justify-center">
+            <p>{{'FAVORITES.NoVacationRentals' | translate}}</p>
+          </div>
+        }
+      }
+    </div>
+
+  }@else {
+    <div class="h-full flex flex-col items-center justify-center">
+      <app-custom-spinner></app-custom-spinner>
+    </div>
+  }
+</ion-content>

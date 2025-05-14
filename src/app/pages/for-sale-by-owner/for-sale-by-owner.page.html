@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+<ion-buttons slot="start">
+  <ion-back-button
+  defaultHref="/tabs/more"
+  text=""
+  icon="chevron-back"
+  ></ion-back-button>
+</ion-buttons>
+    <ion-title>{{'FOR_SALE_BY_OWNER.ForSalebyOwner' | translate}}</ion-title>
+  </ion-toolbar>
+  <div class="outer">
+    @for (segment of segmentOptions; track $index) {
+      <ion-chip
+      (click)="onSelectSegment(segment)"
+      [class.active]="selectedSegment.listType===segment.listType"
+      >{{segment.title}}</ion-chip>
+    }
+  </div>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  @if(selectedSegment.listType===listingTypeEnum.HOME){
+<app-homes-listing
+[isChildComponent]="true"
+[isForSaleByOwner]="true"
+[isForRental]="false"
+></app-homes-listing>
+  }
+@else if(selectedSegment.listType===listingTypeEnum.RENTALHOME){
+  <app-homes-listing
+  [isChildComponent]="true"
+  [isForSaleByOwner]="true"
+  [isForRental]="true"
+  ></app-homes-listing>
+}
+  @else if(selectedSegment.listType===listingTypeEnum.PLOT){
+    <app-plot-listing
+    [isForSaleByOwner]="true"
+    >
+
+    </app-plot-listing>
+  }@else if(selectedSegment.listType===listingTypeEnum.BUSINESSPROPERTY){
+    <app-business-property-listing
+    [isChildComponent]="true"
+    [isForRental]="false"
+    [isForSaleByOwner]="true"
+    ></app-business-property-listing>
+  }
+  @else if(selectedSegment.listType===listingTypeEnum.RENTALBUSINESSPROPERTY){
+    <app-business-property-listing
+    [isChildComponent]="true"
+    [isForRental]="true"
+    [isForSaleByOwner]="true"
+    ></app-business-property-listing>
+  }
+
+</ion-content>

@@ -1,0 +1,82 @@
+<ion-card
+  class="listing-card"
+  (click)="gotoDetails()"
+>
+
+  <img [src]="property().featured_media_thumbnail?(property().featured_media_thumbnail| secureUrl):'assets/images/logo.png'" loading="lazy" />
+  <ion-card-header class="p-[0] px-[6px]">
+    <div class="flex items-center justify-between">
+      <h3 class="text-[black] title" [innerHTML]="property().title.rendered"></h3>
+      <ion-button class="price-btn" shape="round">
+        @if(property()['wpcf-prijs-zonder-punten']){
+          @if(property().eur){
+            {{property().eur}}
+          }@else if(property().usd){
+            {{property().usd}}
+          }@else {
+            {{property().srd}}
+          }
+
+        }@else { {{'AUCTION_VIEW.Negotiable' | translate}} }
+      </ion-button>
+    </div>
+  </ion-card-header>
+  <ion-card-content class="mt-[10px] px-[6px]">
+    <div class="flex items-center">
+      <p class="text-[black]">
+        {{ property()["toolset-meta"]["details-veiling"].subtitel.raw }}
+      </p>
+    </div>
+    @if(property()['wpcf-buurt'] || property().district){
+    <div class="flex items-center gap-[6px] ion-margin-top">
+      <ion-icon
+        color="primary"
+        class="material-icons"
+        data-icon="pin_drop"
+      ></ion-icon>
+      <p class="text-[black]">
+        @if(property()['wpcf-buurt']){
+        {{ property()["wpcf-buurt"] }}, } @if(property().district){
+        {{ property().district }}
+        }
+      </p>
+    </div>
+    }
+
+    <div class="info-btns flex items-center justify-between ion-margin-top">
+      @if(property()['wpcf-aantal-slaapkamers']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons"
+          data-icon="bed"
+        ></ion-icon>
+        <p class="text-[black]">{{ property()["wpcf-aantal-slaapkamers"] }}{{'AUCTION_VIEW.Beds' | translate}} </p>
+      </div>
+
+      } @if(property()['wpcf-aantal-badkamers']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons-outlined"
+          data-icon="bathroom"
+        ></ion-icon>
+        <p class="text-[black]">{{ property()["wpcf-aantal-badkamers"] }}{{'AUCTION_VIEW.Baths' | translate}} </p>
+      </div>
+
+      } @if(property()['wpcf-bouwoppervlakte']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons-outlined"
+          data-icon="filter_none"
+        ></ion-icon>
+        <p class="text-[black]">
+          {{ property()["wpcf-bouwoppervlakte"] | dotToComma }} m²
+        </p>
+      </div>
+
+      }
+    </div>
+  </ion-card-content>
+</ion-card>

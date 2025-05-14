@@ -1,0 +1,174 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="centered">{{"MORE.More" | translate}}</ion-title>
+    <ion-buttons slot="end">
+      @if(language){
+        <ion-button (click)="openLanguageMenu($event)">
+          <img id="language" class="w-[24px] h-[24px]" [src]="language==='en'?'assets/images/languages/english.png':'assets/images/languages/dutch.png'"/>
+        </ion-button>
+      }
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if(isLoading){
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+  }@else{
+  <ion-list>
+    <ion-item routerLink="/for-sale-by-owner" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/for-sale-by-owner.svg"
+      ></ion-icon>
+      <ion-label>{{'MORE.ForSalebyOwner' | translate}}</ion-label>
+    </ion-item>
+    <ion-item detail routerLink="/auctions" lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/auctions-in-suriname.svg"
+      ></ion-icon>
+      <ion-label>{{'MORE.AuctionsinSuriname' | translate}}</ion-label>
+    </ion-item>
+    <ion-item routerLink="/oil-and-gas" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/oil-and-gas.svg"
+      ></ion-icon>
+      <ion-label>{{'MORE.Oil&GasSuriname' | translate}}</ion-label>
+    </ion-item>
+    <ion-card class="sub-menu expanded">
+      <div class="flex items-center justify-between h-full pl-[16px] header">
+        <div class="flex items-center">
+          <ion-icon
+            (click)="gotoDetails(servicesMenu.url)"
+            src="assets/images/icons/services.svg"
+          ></ion-icon>
+          <ion-label (click)="gotoDetails(servicesMenu.url)"
+            >{{'MORE.Services' | translate}}</ion-label
+          >
+        </div>
+        <ion-icon
+          (click)="toggleServicesExpansion()"
+          class="toggle-icon"
+          [name]="isServicesExpanded?'chevron-up':'chevron-down'"
+        ></ion-icon>
+      </div>
+      @if(isServicesExpanded){
+      <div class="separator ion-margin-vertical"></div>
+      <ion-card-content>
+        <ion-list>
+          @for (item of servicesMenu.children; track $index) {
+          <ion-item lines="none" detail (click)="gotoDetails(item.url)">
+            <ion-label>{{item.title}}</ion-label>
+          </ion-item>
+
+          }
+        </ion-list>
+      </ion-card-content>
+
+      }
+    </ion-card>
+    <!-- <ion-card class="sub-menu expanded">
+      <div class="flex items-center justify-between h-full pl-[16px] header">
+        <div class="flex items-center">
+          <ion-icon
+            color="primary"
+            class="material-icons"
+            data-icon="engineering"
+            (click)="gotoDetails(projectDevelopmentMenu.url)"
+          >
+          </ion-icon>
+          <ion-label (click)="gotoDetails(projectDevelopmentMenu.url)"
+            >Project Development</ion-label
+          >
+        </div>
+        <ion-icon
+          (click)="toggleProjectDevelopmentExpansion()"
+          class="toggle-icon"
+          [name]="isProjectDevelopmentExpanded?'chevron-up':'chevron-down'"
+        ></ion-icon>
+      </div>
+      @if(isProjectDevelopmentExpanded){
+      <div class="separator ion-margin-vertical"></div>
+      <ion-card-content>
+        <ion-list>
+          @for (item of projectDevelopmentMenu.children; track $index) {
+          <ion-item lines="none" detail (click)="gotoDetails(item.url)">
+            <ion-label>{{item.title}}</ion-label>
+          </ion-item>
+
+          }
+        </ion-list>
+      </ion-card-content>
+
+      }
+    </ion-card> -->
+
+    <!-- <ion-card class="sub-menu expanded">
+      <div class="flex items-center justify-between h-full pl-[16px] header">
+        <div class="flex items-center">
+          <ion-icon
+            (click)="gotoDetails(constructionsMenu.url)"
+            src="assets/images/icons/construction-infrastructure.svg"
+          ></ion-icon>
+          <ion-label (click)="gotoDetails(servicesMenu.url)"
+            >Construction & Infrastructure</ion-label
+          >
+        </div>
+        <ion-icon
+          (click)="toggleConstructionExpansion()"
+          class="toggle-icon"
+          [name]="isConstructionExpanded?'chevron-up':'chevron-down'"
+        ></ion-icon>
+      </div>
+      @if(isConstructionExpanded){
+      <div class="separator ion-margin-vertical"></div>
+      <ion-card-content>
+        <ion-list>
+          @for (item of constructionsMenu.children; track $index) {
+          <ion-item lines="none" detail (click)="gotoDetails(item.url)">
+            <ion-label>{{item.title}}</ion-label>
+          </ion-item>
+
+          }
+        </ion-list>
+      </ion-card-content>
+
+      }
+    </ion-card> -->
+    <ion-item routerLink="/rental-management" detail lines="none">
+      <ion-icon
+        slot="start"
+        src="assets/images/icons/rental-management.svg"
+      ></ion-icon>
+      <ion-label>{{'MORE.RentalManagement' | translate}}</ion-label>
+    </ion-item>
+    <ion-item routerLink="/agents" detail lines="none">
+      <span class="material-symbols-outlined icon"> id_card </span>
+      <ion-label>{{'MORE.Agents' | translate}}</ion-label>
+    </ion-item>
+    <ion-item routerLink="/about-us" detail lines="none">
+      <ion-icon slot="start" src="assets/images/icons/about-us.svg"></ion-icon>
+      <ion-label>{{'MORE.AboutUs' | translate}}</ion-label>
+    </ion-item>
+    <ion-item routerLink="/contact-us" detail lines="none">
+      <ion-icon
+        slot="start"
+        color="primary"
+        class="material-icons"
+        data-icon="contact_mail"
+      ></ion-icon>
+      <ion-label>{{'MORE.ContactUs' | translate}}</ion-label>
+    </ion-item>
+
+    <ion-item routerLink="/faq" detail lines="none">
+      <ion-icon slot="start" src="assets/images/icons/faq.svg"></ion-icon>
+      <ion-label>{{'MORE.FAQ' | translate}}</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+</ion-content>

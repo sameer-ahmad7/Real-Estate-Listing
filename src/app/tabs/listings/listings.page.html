@@ -1,0 +1,330 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title [class.location]="location">
+      @if(location){
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col gap-[6px] ion-margin-vertical overflow-hidden">
+            <p>{{'LISTINGS.Current_Location' | translate}}</p>
+            <h3>{{location}}</h3>
+          </div>
+          @if(language$ | async; as language){
+            <ion-button fill="clear" (click)="openLanguageMenu($event)">
+              <img id="language" class="w-[24px] h-[24px]" [src]="language==='en'?'assets/images/languages/english.png':'assets/images/languages/dutch.png'"/>
+            </ion-button>
+              }
+
+        </div>
+      }@else{
+        {{ 'LISTINGS.Recent_Listings' | translate }}
+      }
+    </ion-title>
+    @if(!location){
+      <ion-buttons slot="end">
+        @if(language$ | async; as language){
+          <ion-button fill="clear" (click)="openLanguageMenu($event)">
+            <img id="language" class="w-[24px] h-[24px]" [src]="language==='en'?'assets/images/languages/english.png':'assets/images/languages/dutch.png'"/>
+          </ion-button>
+        }
+      </ion-buttons>
+    }
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" [forceOverscroll]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing..."
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+  @if(isLoading && !isRefreshing){
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+  }@else if(!isLoading) {
+
+  <ion-card class="search-container">
+    <!-- Buy/Rent Toggle -->
+    <ion-segment
+      mode="ios"
+      [(ngModel)]="selectedSegment"
+      (ionChange)="onSegmentChanged()"
+    >
+      <ion-segment-button value="buy">
+        <ion-label>{{"LISTINGS.BUY" | translate}}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="rent">
+        <ion-label>{{"LISTINGS.RENT" | translate}}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <div class="input-box">
+      <ion-input
+      (ionChange)="onSearchQueryChanged($event)"
+        class="search-input"
+        lines="none"
+        mode="md"
+        [placeholder]="'LISTINGS.Search' | translate"
+        [(ngModel)]="searchQuery"
+      ></ion-input>
+    </div>
+
+    <div class="flex items-center">
+      <div class="input-box">
+        <ion-select
+          (ionChange)="onPriceChanged($event)"
+          [placeholder]="'LISTINGS.PriceRange' | translate"
+          [value]="selectedSegment==='buy'?selectedBuyPricing:selectedRentalPricing"
+        >
+          @for (pricing of pricings; track $index) {
+          <ion-select-option [value]="pricing.value"
+            >{{pricing.name}}</ion-select-option
+          >
+          }
+        </ion-select>
+      </div>
+    </div>
+
+    <div class="input-box">
+      <ion-select
+        (ionChange)="onSelectedTypesChanged($event)"
+        [multiple]="true"
+        [value]="selectedSegment==='buy'?selectedBuyDataType:selectedRentalDataType"
+        [placeholder]="'LISTINGS.Type' | translate"
+      >
+        @for (type of dataTypes; track $index) {
+        <ion-select-option [value]="type">
+          @if(type===dataTypesEnum.HOME){ {{'LISTINGS.Houses' | translate}} }@else if(type===dataTypesEnum.BUSINESS_PROPERTY){ {{'LISTINGS.BusinessProperties'}} }
+          @else if(type===dataTypesEnum.HOLIDAY_HOME){ {{'LISTINGS.VacationRentals' | translate}} } @else
+          { {{'LISTINGS.Plots' | translate}} }
+        </ion-select-option>
+        }
+        <ion-select-otion [value]="">{{'LISTINGS.All' | translate}}</ion-select-otion>
+      </ion-select>
+    </div>
+
+    <div class="p-[10px]">
+      <ion-checkbox
+      class="font-[600] text-[black]"
+      mode="md"
+      [(ngModel)]="isNearby"
+      (ionChange)="onNearbyChanged($event)"
+      labelPlacement="end">{{'LISTINGS.ShowNearby' | translate}}</ion-checkbox>
+    </div>
+
+    <div class="search-btn">
+      <ion-button
+        (click)="onResetFilter()"
+        color="secondary"
+        shape="round"
+        expand="block"
+        >{{'LISTINGS.Reset' | translate}}</ion-button
+      >
+
+      <ion-button
+        (click)="onApplyFilter()"
+        color="primary"
+        shape="round"
+        expand="block"
+        >{{'LISTINGS.Search' | translate}}</ion-button
+      >
+    </div>
+  </ion-card>
+
+  @if(isFilterApplied){ @if (appliedFilter.type.length===0 ||
+  appliedFilter.type.length>1){ @if(appliedFilter.type.length===0 ||
+  appliedFilter.type.includes(dataTypesEnum.HOME) ){
+  <div class="flex items-center justify-between ion-margin-top">
+    <h3>
+      @if(!appliedFilter.isRental){ {{'LISTINGS.PropertiesforSale' | translate}} }@else {
+        {{'LISTINGS.PropertiesforRent' | translate}} }
+
+    </h3>
+    @if(homes.length>0){
+    <ion-text (click)="onViewAllHomes()" color="primary"
+      ><p>{{'LISTINGS.SeeAll' | translate}}</p></ion-text
+    >
+    }
+  </div>
+  <div class="ion-margin-top ion-margin-bottom">
+    @if(homes.length>0){
+    <swiper-container
+    pagination="true"
+    slides-per-view="1.1"
+    space-between="10"
+    loop-additional-slides="5"
+    class="homes-swiper"
+>
+      @for (home of homes; track home.id) {
+      <swiper-slide
+      slides-per-view="1.1"
+      space-between="10"
+      class="homes-slide" lazy="true">
+        <app-home-view
+          [isRental]="appliedFilter.isRental?true:false"
+          [home]="home"
+        ></app-home-view>
+      </swiper-slide>
+
+       }
+    </swiper-container>
+    }@else {
+    <div class="flex items-center justify-center mt-[32px]">
+      <p class="text-center">{{'LISTINGS.NoProperties' | translate}}</p>
+    </div>
+    }
+  </div>
+
+  <div class="separator"></div>
+
+  } @if(appliedFilter.isRental && appliedFilter.type.length===0 ||
+  appliedFilter.type.includes(dataTypesEnum.HOLIDAY_HOME)){
+  <div class="flex items-center justify-between ion-margin-top">
+    <h3>{{'LISTINGS.Vacation Rentals' | translate}}</h3>
+    @if(holidayHomes.length>0){
+    <ion-text (click)="onViewAllHolidayHomes()" color="primary"
+      ><p>{{'LISTINGS.SeeAll' | translate}}</p></ion-text
+    >
+    }
+  </div>
+  <div class="ion-margin-top ion-margin-bottom">
+    @if(holidayHomes.length>0){
+    <swiper-container
+    pagination="true"
+    slides-per-view="1.1"
+    space-between="10"
+    loop-additional-slides="5"
+    class="homes-swiper">
+      @for (home of holidayHomes; track home.id) {
+      <swiper-slide class="homes-slide" lazy="true">
+        <app-holiday-home-view [home]="home"></app-holiday-home-view>
+      </swiper-slide>
+}
+    </swiper-container>
+    }@else {
+    <div class="flex items-center justify-center mt-[32px]">
+      <p class="text-center">{{'LISTINGS.NoVacation' | translate}}</p>
+    </div>
+    }
+  </div>
+  <div class="separator"></div>
+
+  } @if(!appliedFilter.isRental && appliedFilter.type.length===0 ||
+  appliedFilter.type.includes(dataTypesEnum.PLOT)){
+  <div class="flex items-center justify-between ion-margin-top">
+    <h3>{{'LISTINGS.Plots' | translate}}</h3>
+    @if(plots.length>0){
+    <ion-text color="primary" (click)="onViewAllPlots()"
+      ><p>{{'LISTINGS.SeeAll' | translate}}</p></ion-text
+    >
+    }
+  </div>
+  <div class="ion-margin-top ion-margin-bottom">
+    @if(plots.length>0){
+    <swiper-container
+    pagination="true"
+    slides-per-view="1.1"
+    space-between="10"
+    loop-additional-slides="4"
+    class="homes-swiper"
+>
+      @for (plot of plots; track plot.id) {
+      <swiper-slide class="homes-slide" lazy="true">
+        <app-plot-view [plot]="plot"></app-plot-view>
+      </swiper-slide>
+
+       }
+    </swiper-container>
+    }@else {
+    <div class="flex items-center justify-center mt-[32px]">
+      <p class="text-center">{{'LISTINGS.NoPlots' | translate}}</p>
+    </div>
+    }
+  </div>
+  <div class="separator"></div>
+
+  } @if(appliedFilter.type.length===0 ||
+  appliedFilter.type.includes(dataTypesEnum.BUSINESS_PROPERTY)){
+  <div class="flex items-center justify-between ion-margin-top">
+    <h3>{{'LISTINGS.BusinessProperties'| translate}}</h3>
+    @if(businessProperties.length>0){
+    <ion-text (click)="onViewAllBusinessProperties()" color="primary"
+      ><p>{{'LISTINGS.SeeAll' | translate}}</p></ion-text
+    >
+    }
+  </div>
+  <div class="ion-margin-top ion-margin-bottom">
+    @if(businessProperties.length>0){
+    <swiper-container
+    pagination="true"
+    slides-per-view="1.1"
+    space-between="10"
+    loop-additional-slides="4"
+    class="homes-swiper"
+>
+      @for (property of businessProperties; track property.id) {
+      @if(property.featured_media_thumbnail ||
+      property.featured_media_thumbnail){
+      <swiper-slide class="homes-slide" lazy="true">
+        <app-business-property-view
+          [property]="property"
+          [isRental]="appliedFilter.isRental?true:false"
+        ></app-business-property-view>
+      </swiper-slide>
+      }@else{
+      <swiper-slide class="custom-slide">
+        <app-business-property-view
+          [property]="property"
+          [isRental]="appliedFilter.isRental?true:false"
+        ></app-business-property-view>
+      </swiper-slide>
+      } }
+    </swiper-container>
+    }@else {
+    <div class="flex items-center justify-center mt-[32px]">
+      <p class="text-center">{{'LISTINGS.NoBusinessProperties'| translate}}</p>
+    </div>
+    }
+  </div>
+  <div class="separator"></div>
+
+  } } @else {
+  <div class="flex flex-col gap-[10px] ion-margin-top">
+    @if(appliedFilter.type.includes(dataTypesEnum.HOME)){ @for (home of homes;
+    track $index) {
+    <app-home-view
+      [home]="home"
+      [isRental]="appliedFilter.isRental?true:false"
+    ></app-home-view>
+    } }@else if(appliedFilter.type.includes(dataTypesEnum.PLOT)){ @for (plot of
+    plots; track $index) {
+    <app-plot-view
+      [plot]="plot"
+      [appliedFilter]="appliedFilter"
+    ></app-plot-view>
+    } }@else if(appliedFilter.type.includes(dataTypesEnum.HOLIDAY_HOME)){ @for
+    (home of holidayHomes; track $index) {
+    <app-holiday-home-view [home]="home"></app-holiday-home-view>
+    } }@else if(appliedFilter.type.includes(dataTypesEnum.BUSINESS_PROPERTY)){
+    @for(property of businessProperties;track $index){
+    <app-business-property-view
+      [property]="property"
+      [isRental]="appliedFilter.isRental?true:false"
+    ></app-business-property-view>
+    } }
+  </div>
+  <ion-infinite-scroll
+    [disabled]="isScrollDisabled"
+    threshold="10px"
+    position="bottom"
+    (ionInfinite)="onIonInfinite($event)"
+  >
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  } } }
+</ion-content>

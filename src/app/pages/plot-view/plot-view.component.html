@@ -1,0 +1,90 @@
+<ion-card
+[class.grid-listing]="viewMode() === 'grid'"
+class="listing-card" (click)="gotoDetails()">
+    <div class="relative">
+      <img [src]="plot().featured_media_thumbnail?(plot().featured_media_thumbnail | secureUrl):'assets/images/logo.png'" loading="lazy" />
+
+      <ion-chip class="price-chip">
+        @if(plot()['wpcf-prijs-zonder-punten']){
+          @if(plot().eur){
+            {{plot().eur}}
+          }@else if(plot().usd){
+            {{plot().usd}}
+          }@else {
+            {{plot().srd}}
+          }
+        }@else {
+          {{'PLOT_VIEW.Negotiable' | translate}}
+         }
+      </ion-chip>
+    </div>
+  <ion-card-header class="p-[0] px-[6px]">
+    <div class="flex items-center justify-between">
+      <h3 class="text-[black] title" [innerHTML]="plot().title.rendered"></h3>
+    </div>
+  </ion-card-header>
+  <ion-card-content class="mt-[10px] px-[6px]">
+    <div class="flex items-center">
+      <p class="text-[black]  overflow-hidden whitespace-nowrap text-ellipsis">
+        {{ plot()["toolset-meta"]["details-perceel"].subtitel.raw }}
+      </p>
+    </div>
+
+    @if(plot()['wpcf-buurt'] || plot().district){
+    <div
+    (click)="$event.stopImmediatePropagation();openGoogleMaps()"
+    class="flex items-center gap-[6px] ion-margin-top">
+      <ion-icon
+        color="primary"
+        class="material-icons"
+        data-icon="pin_drop"
+      ></ion-icon>
+      <p class="text-[black] overflow-hidden whitespace-nowrap text-ellipsis">
+        @if(plot()['wpcf-buurt']){
+        {{ plot()["wpcf-buurt"] }}, } @if(plot().district){
+        {{ plot().district }}
+        }
+      </p>
+    </div>
+
+    }
+
+    @if(distance){
+      <div
+      (click)="$event.stopImmediatePropagation();openGoogleMaps()"
+      class="flex items-center gap-[6px] ion-margin-top">
+        <ion-icon
+          color="primary"
+          class="material-icons"
+          data-icon="route"
+        ></ion-icon>
+        <p class="text-[black]">{{ distance }}</p>
+      </div>
+
+      }
+
+    <div class="info-btns flex items-center gap-[10px] ion-margin-top">
+      @if(plot()['wpcf-perceeloppervlakte']){
+      <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons-outlined"
+          data-icon="zoom_out_map"
+        ></ion-icon>
+        <p class="text-[black]">
+          {{ plot()["wpcf-perceeloppervlakte"] | dotToComma }} m²
+        </p>
+      </div>
+
+      }
+      <!-- <div class="flex items-center gap-[6px]">
+        <ion-icon
+          color="primary"
+          class="material-icons-outlined"
+          data-icon="payments"
+        ></ion-icon>
+
+      </div> -->
+    </div>
+  </ion-card-content>
+</ion-card>

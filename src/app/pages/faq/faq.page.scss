@@ -1,0 +1,21 @@
+.outer {
+  width: 98%; /* Adjust the container width */
+  overflow-x: auto;
+  white-space: nowrap; /* Prevents content from wrapping */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE & Edge */
+  margin-top: 24px;
+}
+
+ion-chip{
+  font-weight: 600;
+    padding: 10px 16px;
+    min-width: 90px;
+    align-items: center;
+    justify-content: center;
+    background: #f2f2f2;
+    &.active{
+      background: var(--ion-color-primary);
+      color:white;
+    }
+}

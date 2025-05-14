@@ -1,0 +1,122 @@
+@if(!isChildComponent()){
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>{{'CONTACT_US.ContactUs' | translate}}</ion-title>
+      <ion-buttons slot="start">
+        <ion-back-button
+        defaultHref="/tabs/more"
+        text=""
+        icon="chevron-back"
+        ></ion-back-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+}
+
+@if(!isChildComponent()){
+  <ion-content class="ion-padding">
+    <ng-container [ngTemplateOutlet]="contactFormTemplate"></ng-container>
+  </ion-content>
+}@else{
+  <ng-container [ngTemplateOutlet]="contactFormTemplate"></ng-container>
+
+}
+<ng-template #contactFormTemplate>
+  <form [formGroup]="contactForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <ion-input formControlName="name" mode="md" fill="outline" [placeholder]="'CONTACT_US.Name' | translate"></ion-input>
+          @if(contactForm.controls.name.touched &&
+          contactForm.controls.name.invalid){
+          <ion-text class="error" color="danger">
+            <p class="ml-[6px] mt-[10px]">{{'CONTACT_US.ValidName' | translate}}</p>
+          </ion-text>
+
+          }
+
+        </ion-col>
+        <ion-col size="12">
+          <ion-input formControlName="phone" type="tel" mode="md" fill="outline" [placeholder]="'CONTACT_US.Phone' | translate"></ion-input>
+          @if(contactForm.controls.phone.touched &&
+          contactForm.controls.phone.invalid){
+          <ion-text class="error" color="danger">
+            <p class="ml-[6px] mt-[10px]">{{'CONTACT_US.ValidPhone' | translate}}</p>
+          </ion-text>
+
+          }
+
+        </ion-col>
+
+        <ion-col size="12">
+          <ion-input formControlName="email" type="email" mode="md" fill="outline" [placeholder]="'CONTACT_US.Email' | translate"></ion-input>
+          @if(contactForm.controls.email.touched &&
+          contactForm.controls.email.invalid){
+          <ion-text class="error" color="danger">
+            <p class="ml-[6px] mt-[10px]">{{'CONTACT_US.ValidEmail' | translate}}</p>
+          </ion-text>
+
+          }
+
+        </ion-col>
+
+        <ion-col size="12">
+          <ion-input formControlName="subject" type="text" mode="md" fill="outline" [placeholder]="'CONTACT_US.Subject' | translate"></ion-input>
+          @if(contactForm.controls.subject.touched &&
+          contactForm.controls.subject.invalid){
+          <ion-text class="error" color="danger">
+            <p class="ml-[6px] mt-[10px]">
+              {{'CONTACT_US.ValidSubject' | translate}}
+            </p>
+          </ion-text>
+          }
+
+        </ion-col>
+
+        <ion-col size="12">
+          <ion-textarea
+          rows="10"
+          formControlName="message" type="text" mode="md" fill="outline" [placeholder]="'CONTACT_US.Message' | translate"></ion-textarea>
+          @if(contactForm.controls.message.touched &&
+          contactForm.controls.message.invalid){
+          <ion-text class="error" color="danger">
+            <p class="ml-[6px] mt-[10px]">{{'CONTACT_US.ValidMessage' | translate}}</p>
+          </ion-text>
+          }
+
+        </ion-col>
+
+
+      </ion-row>
+      @if(submitted){
+        @if(isSuccess){
+          <ion-text color="success">
+            <p class="ml-[6px] ion-margin-top">{{'CONTACT_US.Success' | translate}}</p>
+          </ion-text>
+        }@else {
+          <ion-text color="danger">
+            <p class="ml-[6px] ion-margin-top">{{'CONTACT_US.Error' | translate}}</p>
+          </ion-text>
+
+        }
+      }
+    </ion-grid>
+
+
+    <div class="btn-container ion-margin-top">
+      <ion-button
+      (click)="onSubmit()"
+      [disabled]="contactForm.invalid || submitted || isSubmitting"
+      shape="round" expand="full">
+      @if(isSubmitting){
+        <ion-spinner name="circular"></ion-spinner>
+      }@else{
+        {{'CONTACT_US.Send' | translate}}
+      }
+      </ion-button>
+    </div>
+
+  </form>
+
+</ng-template>

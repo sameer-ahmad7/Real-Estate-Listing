@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="/tabs/more"
+        text=""
+        icon="chevron-back"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{'OilGas.OilGas' | translate}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  @if(isLoading){
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+  }@else {
+  <div [innerHTML]="htmlContent"></div>
+  <div class="ion-margin-top">
+    <ion-card class="broker">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-[10px]">
+          <div class="flex flex-col gap-[4px]">
+            <div class="flex items-center gap-[10px]">
+              <div class="avatar">
+                <img src="assets/images/logo.png" />
+              </div>
+              <div class="flex flex-col gap-[2px]">
+                <p>'' Real Estate</p>
+                <p>Agency NV</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="icons flex items-center gap-[6px]">
+          <ion-icon
+            (click)="openPhoneNumber('+597 422 644',$event)"
+            color="primary"
+            class="material-icons"
+            data-icon="phone_in_talk"
+          ></ion-icon>
+
+          <ion-icon
+            (click)="openEmail('info@''.com')"
+            color="primary"
+            class="material-icons"
+            data-icon="near_me"
+          ></ion-icon>
+        </div>
+      </div>
+    </ion-card>
+  </div>
+  }
+</ion-content>

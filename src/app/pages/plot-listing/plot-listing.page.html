@@ -1,0 +1,125 @@
+@if(!isForSaleByOwner()){
+<ion-header>
+  <ion-toolbar>
+ @if(!isLoading){
+    <ion-buttons slot="start">
+      @if(isModal){
+      <ion-button (click)="dismiss()" fill="icon-only">
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+      }@else {
+      <ion-back-button
+        defaultHref="/"
+        text=""
+        icon="chevron-back"
+      ></ion-back-button>
+      }
+    </ion-buttons>
+    <ion-title>{{'PLOT_LISTING.Plots' | translate}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-segment [(ngModel)]="viewMode" mode="ios">
+        <ion-segment-button
+        value="grid"
+        class="toggle-btn"
+        [class.active]="viewMode === 'grid'"
+      >
+        <ion-icon name="grid-outline"></ion-icon>
+      </ion-segment-button>
+
+        <ion-segment-button
+          value="list"
+          class="toggle-btn"
+          [class.active]="viewMode === 'list'"
+        >
+          <ion-icon name="list-outline"></ion-icon>
+        </ion-segment-button>
+
+      </ion-segment>
+
+      </ion-buttons>
+
+
+    }
+  </ion-toolbar>
+</ion-header>
+}
+@if(!isForSaleByOwner()){
+
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing..."
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+
+<ng-container [ngTemplateOutlet]="plotsListing"></ng-container>
+</ion-content>
+}@else {
+@if(isLoading){
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+}@else {
+  <ng-container [ngTemplateOutlet]="plotsListing"></ng-container>
+
+}
+
+}
+<ng-template #plotsListing>
+  @if(!isLoading){ @if(!isModal){
+    <app-plot-filter
+    [preFilter]="appliedFilter"
+    (onApplyFilter)="onApplyFilter($event)"
+    (onResetFilter)="onResetFilter()"
+    [districts]="districts"
+    [landAreas]="landAreas"
+    [landTitles]="landTitles"
+    [pricings]="pricings"
+    ></app-plot-filter>
+      }
+
+      @if(viewMode === 'grid'){
+        <ion-grid
+        style="padding:0"
+        class="ion-margin-top">
+          <ion-row>
+            @for (plot of plots; track plot.id) {
+              <ion-col size="6">
+              <app-plot-view
+              [viewMode]="viewMode"
+              [plot]="plot"></app-plot-view>
+              </ion-col>
+              }
+
+            </ion-row>
+            </ion-grid>
+          }@else {
+            <div class="flex flex-col gap-[10px] ion-padding">
+              @for (plot of plots; track plot.id) {
+              <app-plot-view [plot]="plot"></app-plot-view>
+              }
+            </div>
+
+          }
+
+      }@else if(isLoading && !isRefreshing){
+        <div class="h-full flex flex-col items-center justify-center">
+          <app-custom-spinner></app-custom-spinner>
+
+        </div>
+
+      }
+      <ion-infinite-scroll
+        [disabled]="isScrollDisabled"
+        threshold="10px"
+        position="bottom"
+        (ionInfinite)="onIonInfinite($event)"
+      >
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+</ng-template>

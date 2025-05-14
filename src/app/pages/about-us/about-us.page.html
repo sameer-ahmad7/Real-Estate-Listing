@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="/tabs/more"
+        text=""
+        icon="chevron-back"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{'AboutUs.AboutUs' | translate}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if(isLoading){
+  <div class="h-full flex flex-col items-center justify-center">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+  }@else {
+  <div class="header-container">
+    @if(isPlaying){
+    <iframe
+      style="width: 100%; height: 250px"
+      [src]="youtubeVideoURL | safeUrl"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen
+    ></iframe>
+    }@else {
+    <div class="image-container relative">
+      @if(isImageLoaded){
+      <div class="youtube-logo" (click)="playVideo()">
+        <img width="48" height="48" src="assets/images/icons/youtube.png" />
+      </div>
+    }
+      @if(!isImageLoaded){
+        <div class="flex items-center justify-center ion-margin-top">
+
+          <app-custom-spinner></app-custom-spinner>
+        </div>
+      }
+      <img
+      [hidden]="!isImageLoaded"
+      (load)="onImageLoad()" [srcset]="imgSrc" />
+      @if(isImageLoaded){
+      <div class="logo">
+        <img src="assets/images/logo.png" />
+      </div>
+    }
+    </div>
+
+    }
+    <h3>Real Estate Agency NV</h3>
+  </div>
+  <div class="mt-[24px]" [innerHTML]="htmlContent"></div>
+
+  <div class="ion-margin-top">
+    <div class="separator"></div>
+
+    <ion-text color="primary">
+      <h3 class="p-[10px]">{{'AboutUs.ContactUs' | translate}}</h3>
+    </ion-text>
+    <app-contact-us [isChildComponent]="true"></app-contact-us>
+  </div>
+
+  }
+</ion-content>
